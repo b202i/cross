@@ -7,13 +7,13 @@ Cross generates research reports using up to 5 AI providers simultaneously, then
 ## 1. Install Cross
 
 ```bash
-pip install cross-ai
+pipx install cross-st
 ```
 
-With text-to-speech support (Python 3.11 on macOS ARM or Linux):
+With text-to-speech support:
 
 ```bash
-pip install "cross-ai[tts]"
+pipx install "cross-st[tts]"
 ```
 
 ---

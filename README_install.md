@@ -254,7 +254,6 @@ Then point PyCharm at `.venv/bin/python` again.
   Copy them manually to each machine or use a password manager.
 - `cross-story` is a separate private repo cloned independently alongside `cross`.
   If you don't have access, create an empty directory: `mkdir ~/github/cross/story`.
-- **Future:** when Cross is published to PyPI as `cross-ai`, steps 4 and 5
-  collapse to `pip install cross-ai` and the symlink script will not be needed.
-  See ticket T-04 in `README_rebrand_cross.md`.
+- Cross is published to PyPI as `cross-st`. Users install with `pipx install cross-st`
+  (or `pip install cross-st`); the symlink script is no longer needed.
 

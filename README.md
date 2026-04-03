@@ -73,8 +73,8 @@ Restart your terminal after `pipx ensurepath` so the new PATH takes effect.
 ### 3. Install Cross
 
 ```bash
-pipx install crossai-cli              # no TTS audio
-pipx install "crossai-cli[tts]"       # with text-to-speech (st-speak, st-voice)
+pipx install cross-st              # no TTS audio
+pipx install "cross-st[tts]"       # with text-to-speech (st-speak, st-voice)
 ```
 
 Both work on Python 3.10–3.13. No version juggling required.

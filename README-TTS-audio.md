@@ -93,10 +93,10 @@ All branches are fully compatible with Cross.
 
 ```bash
 # Recommended: pipx (isolated, no venv management)
-pipx install "cross-ai[tts]"
+pipx install "cross-st[tts]"
 
 # Or inside a project venv:
-pip install "cross-ai[tts]"
+pip install "cross-st[tts]"
 # or from requirements.txt:
 pip install -r requirements.txt
 ```
@@ -107,7 +107,7 @@ If you want the latest Python:
 
 ```bash
 brew install python@3.12   # or @3.10, @3.11, @3.13 — all work
-pipx install --python python3.12 "cross-ai[tts]"
+pipx install --python python3.12 "cross-st[tts]"
 ```
 
 ### Linux — Debian / Ubuntu
@@ -121,9 +121,9 @@ sudo apt install libsndfile1 ffmpeg
 sudo apt install python3.11 python3.11-venv   # or 3.10, 3.12, 3.13
 
 # 3. Install Cross with TTS
-pipx install "cross-ai[tts]"
+pipx install "cross-st[tts]"
 # or inside a venv:
-pip install "cross-ai[tts]"
+pip install "cross-st[tts]"
 ```
 
 > **Why `libsndfile1`?**  On Linux, `soundfile` uses a pure-Python wheel that
@@ -144,14 +144,14 @@ Then set `AUDIO_PLAYER=mpv` in `~/.crossenv` if Cross doesn't detect it automati
 
 ```bash
 sudo dnf install libsndfile ffmpeg python3.11
-pipx install "cross-ai[tts]"
+pipx install "cross-st[tts]"
 ```
 
 ### Linux — Arch
 
 ```bash
 sudo pacman -S libsndfile ffmpeg python
-pipx install "cross-ai[tts]"
+pipx install "cross-st[tts]"
 ```
 
 ### Windows
@@ -284,7 +284,7 @@ without TTS packages installed.
 Install without TTS:
 
 ```bash
-pipx install cross-ai                  # PyPI
+pipx install cross-st                  # PyPI
 # or from source:
 pip install -r requirements-no-tts.txt
 ```
@@ -293,7 +293,7 @@ If you run a TTS command without the packages, Cross exits with a helpful messag
 
 ```
 Error: st-speak requires TTS packages.
-Run: pip install "cross-ai[tts]"  or  pipx install "cross-ai[tts]"
+Run: pip install "cross-st[tts]"  or  pipx install "cross-st[tts]"
 ```
 
 ---
@@ -314,7 +314,7 @@ nc -z localhost 10200 && echo "server is up" || echo "server is down"
 TTS packages are not installed:
 
 ```bash
-pip install "cross-ai[tts]"
+pip install "cross-st[tts]"
 ```
 
 ### `libsndfile` error on Linux

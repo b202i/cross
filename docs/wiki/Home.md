@@ -59,8 +59,8 @@ New user? Start here: **[Onboarding](Onboarding)** — set up your API keys and 
 ## Install
 
 ```bash
-pip install cross-ai          # no TTS
-pip install "cross-ai[tts]"   # with text-to-speech (Python 3.11 + macOS ARM)
+pipx install cross-st          # no TTS
+pipx install "cross-st[tts]"   # with text-to-speech
 st-admin --setup              # configure API keys → ~/.crossenv
 ```
 

@@ -22,7 +22,7 @@ development repository to a clean, welcoming public open-source project.
 | Fix `requirements.txt` dependency conflicts | ✅ Done |
 | Migrate internal working files to `cross-internal` | ⬜ TODO — run `script/migrate_internal_docs.sh` |
 | Make GitHub repo public | ⬜ TODO |
-| Publish to PyPI as `cross-ai` | ⬜ Future |
+| Publish to PyPI as `cross-st` | ✅ Done — `cross-st 0.1.0` |
 
 ---
 
@@ -228,16 +228,17 @@ When the repo is clean and ready:
 
 ---
 
-## PyPI Publication (Future)
+## PyPI Publication
 
-When ready to publish as `cross-ai` on PyPI:
+Cross is published on PyPI as `cross-st`:
 
-1. Create `pyproject.toml` with `[project.scripts]` entries for all `st-*` commands
-2. The manual `script/symbolic_links.bash` step goes away — pip handles it
-3. Users install with: `pip install cross-ai`
-4. Use GitHub Actions for automated PyPI publishing on tagged releases
+1. Install with `pipx install cross-st` (recommended) or `pip install cross-st`
+2. TTS variant: `pipx install "cross-st[tts]"`
+3. First-time setup: `st-admin --setup`
+4. GitHub Actions handles automated PyPI publishing on tagged releases
 
-> **Note:** The PyPI package name `cross` is already taken. Use `cross-ai`.
+> **Note:** The PyPI package names `cross` and `cross-ai` were already taken.
+> An inadvertent publish as `crossai-cli` was yanked. The canonical name is `cross-st`.
 
 ---
 

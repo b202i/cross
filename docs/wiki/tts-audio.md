@@ -13,7 +13,7 @@ work without it.  TTS adds three commands: `st-speak`, `st-voice`, and
 
 ```bash
 # 1. Install Cross with audio support
-pipx install "cross-ai[tts]"
+pipx install "cross-st[tts]"
 
 # 2. Start a local Piper TTS server (Docker)
 docker run -d --name wyoming-piper -p 10200:10200 \
@@ -57,7 +57,7 @@ syntax in `st-plot.py` and `st-voice.py`. There is no ceiling.
 ### macOS (Apple Silicon or Intel)
 
 ```bash
-pipx install "cross-ai[tts]"
+pipx install "cross-st[tts]"
 ```
 
 `soundfile` bundles its own `libsndfile` binary on macOS — no Homebrew package
@@ -65,7 +65,7 @@ needed.  Any Python 3.10–3.13 works; use `--python` to pick a specific version
 
 ```bash
 brew install python@3.12
-pipx install --python python3.12 "cross-ai[tts]"
+pipx install --python python3.12 "cross-st[tts]"
 ```
 
 ### Linux — Debian / Ubuntu
@@ -75,7 +75,7 @@ pipx install --python python3.12 "cross-ai[tts]"
 sudo apt install libsndfile1 ffmpeg
 
 # Install Cross with TTS
-pipx install "cross-ai[tts]"
+pipx install "cross-st[tts]"
 ```
 
 For in-terminal voice playback in `st-voice` (the `s` key), install a player —
@@ -90,14 +90,14 @@ echo "AUDIO_PLAYER=mpv" >> ~/.crossenv
 
 ```bash
 sudo dnf install libsndfile ffmpeg
-pipx install "cross-ai[tts]"
+pipx install "cross-st[tts]"
 ```
 
 ### Linux — Arch
 
 ```bash
 sudo pacman -S libsndfile ffmpeg
-pipx install "cross-ai[tts]"
+pipx install "cross-st[tts]"
 ```
 
 ### Windows
@@ -222,14 +222,14 @@ All commands except `st-speak`, `st-voice`, and `st-prep --mp3`/`--all` work
 without TTS packages.
 
 ```bash
-pipx install cross-ai          # no TTS extras
+pipx install cross-st          # no TTS extras
 ```
 
 Running a TTS command without the packages prints a clear message and exits:
 
 ```
 Error: st-speak requires TTS packages.
-Run: pip install "cross-ai[tts]"  or  pipx install "cross-ai[tts]"
+Run: pip install "cross-st[tts]"  or  pipx install "cross-st[tts]"
 ```
 
 ---
@@ -243,7 +243,7 @@ nc -z localhost 10200 && echo "up" || echo "down"
 ```
 
 **`ImportError` / `soundfile not found`**  
-TTS packages not installed: `pip install "cross-ai[tts]"`
+TTS packages not installed: `pip install "cross-st[tts]"`
 
 **`libsndfile` error on Linux**  
 `sudo apt install libsndfile1` (Debian/Ubuntu) — the Linux soundfile wheel

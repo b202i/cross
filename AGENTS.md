@@ -15,7 +15,8 @@ cross_ai/st-*.py         ← 28 individual CLI tools (each owns its own logic)
 cross_ai/st-admin.py     ← Settings manager: DEFAULT_AI, model overrides, TTS voice, editor, --init-templates
 cross_ai/st-domain.py    ← Interactive wizard: create a new Cross-Stones domain prompt (Phases 2–4)
 cross_ai/st-fetch.py     ← Import external content into a container (tweet_id / --file / --url / --clipboard)
-cross_ai/st-fix.py       ← Improve a story via fact-check feedback (modes: patch / best-source / synthesize)
+cross_ai/st-find.py      ← Keyword search across .json containers and .prompt files; boolean operators (+required, ^excluded) + wildcards
+cross_ai/st-fix.py       ← Improve a story via fact-check feedback (modes: iterate [default] / patch / best-source / synthesize)
 cross_ai/st-merge.py     ← Synthesize multiple AI stories (auto: simple mode or quality mode using fact scores)
 cross_ai/st-man.py       ← Man-page viewer: local help from docstrings + --web opens GitHub Wiki
 cross_ai/st-new.py       ← Create a new prompt from template/; opens editor; optionally launches st-bang
@@ -72,7 +73,7 @@ Every story lives in a single `.json` container with two top-level arrays:
 `st-bang` launches one `st-gen --bang N` subprocess per AI. Each writes to `tmp/<story>_N.json` and creates a block file `tmp/<story>_N.json.block`. `st-bang` polls every second until all block files are removed, then merges results into the main `.json`. Use `mmd_util.tmp_safe_name()` to convert file paths to collision-safe flat names for `tmp/`.
 
 ## API Response Cache
-All AI calls are cached by default. Cache key = MD5 of the serialized payload → `api_cache/<hash>.json`. Pass `--no-cache` to bypass. The cache makes development fast — replay expensive API calls instantly.
+All AI calls are cached by default. Cache key = MD5 of the serialized payload → `api_cache/<hash>.json`. Pass `--no-cache` to bypass. Set `CROSS_NO_CACHE=1` in `~/.crossenv` or `.env` to disable caching globally without per-command flags (implemented in cross-ai-core ≥ 0.4.1). The cache makes development fast — replay expensive API calls instantly.
 
 ## Setup (Python 3.10+ required; 3.11 recommended)
 ```bash
@@ -84,8 +85,8 @@ The old `bash script/symbolic_links.bash` step is obsolete — `pip install -e .
 
 For pipx installs (recommended for end users):
 ```bash
-pipx install cross-ai              # no TTS
-pipx install "cross-ai[tts]"       # with text-to-speech (st-speak, st-voice)
+pipx install cross-st              # no TTS
+pipx install "cross-st[tts]"       # with text-to-speech (st-speak, st-voice)
 st-admin --setup                   # configure API keys on first run
 ```
 Audio packages (`soundfile`, `yakyak`) have wheels for Python 3.10–3.13 on macOS ARM — **there is no Python 3.11 upper limit for TTS**. The minimum is 3.10 (numpy 2.x, scipy 1.15.x, and `match` syntax in st-plot.py/st-voice.py require it). 3.9 is not supported. Note: numpy 2.3+ requires Python 3.11+; on 3.10 pip auto-resolves to numpy 2.2.x. See `tests/test_tts_stack.py` for a live install+import test across all versions.
@@ -194,13 +195,7 @@ All API errors go through `ai_error_handler.handle_api_error()`. It distinguishe
 
 ## Active Sprint
 
-See `SPRINT_CURRENT.md` for the current PyPI distribution sprint (A1–A9).  
-A1–A8, B1, B2, B5, and C1 are complete. Remaining before A9 (PyPI publish): **B3** (`CROSS_NO_CACHE=1`).
-
-**Open tasks:**
-- **B3** 🟡 `CROSS_NO_CACHE=1` env var support in all AI handlers — not yet implemented; honor in each handler's `get_cached_response()` before reading cache
-- **B4** 🟢 `st-admin --cache-info` / `--cache-clear` / `--cache-cull DAYS` — not yet implemented
-- **B6** 🟢 Windows/WSL2 install docs in `docs/wiki/Onboarding.md` — not yet written
+Sprint tracking has moved to `cross-internal/SPRINT_CURRENT.md` (private). A1–A9, B1–B5, C1, C2, C3 are complete. `cross-st 0.1.0` is live at https://pypi.org/project/cross-st/0.1.0/.
 
 ## Key Files for Context
 | File | Why It Matters |
@@ -208,6 +203,7 @@ A1–A8, B1, B2, B5, and C1 are complete. Remaining before A9 (PyPI publish): **
 | `cross_ai/st.py` | Menu structure and `POST_CMD_REFRESH` set |
 | `cross_ai/st-admin.py` | Settings manager — `DEFAULT_AI`, model overrides, TTS voice, editor, `--init-templates`; `--overwrite-templates` replaces existing template files |
 | `cross_ai/st-domain.py` | Interactive wizard: create a new Cross-Stones domain prompt (Phases 2–4) |
+| `cross_ai/st-find.py` | Keyword search: `parse_boolean_pattern()` handles `+required ^excluded` operators; `wildcard_to_regex()` expands `*`/`?`; searches titles, prompts, and story text |
 | `cross_ai/ai_handler.py` | Compatibility shim → `cross_ai_core.ai_handler`; exposes `process_prompt`, `get_default_ai`, etc. |
 | `cross_ai/base_handler.py` | Compatibility shim → `cross_ai_core.ai_base.BaseAIHandler` |
 | `cross_ai/ai_url.py` | X/Twitter fetch handler for `st-fetch`; uses `AI_MAKE="url"`, not registered in `AI_HANDLER_REGISTRY` |

@@ -7,13 +7,34 @@ Cross uses [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [Unreleased]
+## [0.1.0] — 2026-04-03 — First public release on PyPI (`cross-st`)
+
+> Published to https://pypi.org/project/cross-st/0.1.0/
+> Install: `pipx install cross-st` or `pipx install "cross-st[tts]"`
 
 ### Added
+- **PyPI distribution** (`cross-st`) — `pipx install cross-st`; all `st-*`
+  entry points created automatically via `[project.scripts]` in `pyproject.toml`
+- **`st-admin --setup`** — interactive first-run wizard: configures API keys,
+  `DEFAULT_AI`, TTS voice, editor in `~/.crossenv`
+- **`st-admin --init-templates` / `--overwrite-templates`** — seed or refresh
+  `~/.cross_templates/` from the bundled `template/` directory
+- **`st-stones --init`** — seed `~/cross-stones/` from bundled benchmark prompts
+- **`st-domain`** — interactive wizard to create new Cross-Stones domain prompts
+  (Phases 2–4 of `DOMAIN_PROMPT_PROCESS.md`)
+- **`mmd_startup.require_config()`** — first-run guard in every `st-*.py`;
+  redirects to `st-admin --setup` when config is missing
+- **`~/.crossenv`** — global config convention; `~/.cross_api_cache/` for cache;
+  `~/.cross_templates/` for templates; `~/cross-stones/` for benchmark domains
+- **`CROSS_NO_CACHE=1`** env var honored in all AI handlers (via cross-ai-core ≥ 0.4.1)
+- **`commands.py`** — `runpy.run_path()` dispatch for all `st-*.py` entry points;
+  inserts `cross_ai/` onto `sys.path`
+- **AI stack extracted to `cross-ai-core`** — thin shims in `cross_ai/` keep all
+  imports working; actual provider code lives in the `cross-ai-core` sibling repo
 - `st-speed` — AI performance benchmarking with `--ai-caption`, `--ai-short`,
   `--ai-title`, `--ai-summary` options for AI-generated narrative
-- `st-find` — keyword search across prompts, stories, and titles with
-  multi-keyword AND/OR logic and context preview
+- `st-find` — keyword search across prompts, stories, and titles with boolean
+  operators (`+required`, `^excluded`), wildcards, and context preview
 - `st-fix --mode iterate` — iterative per-claim fixing: each claim is rewritten
   and immediately fact-checked before moving to the next
 - `st-fact --ai all` — fact-check with all configured AI providers in parallel
@@ -37,6 +58,9 @@ Cross uses [Semantic Versioning](https://semver.org/).
   in `put_content`
 
 ### Changed
+- All runtime code moved to `cross_ai/` package (C1); repo root contains only
+  config files, docs, tests, and scripts
+- Package renamed from `crossai-cli` to `cross-st` (C2)
 - `st-fix`: post-fix fact-check now scoped to changed claims only, not the
   entire document (avoids inflating the false-claim count)
 
@@ -46,7 +70,7 @@ Cross uses [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [0.1.0] — 2025-03-01 (initial private release)
+## [0.0.1] — 2025-03-01 (initial private release)
 
 ### Added
 - `st-gen` — generate a story from a `.prompt` file using a selected AI

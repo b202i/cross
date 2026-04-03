@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 # Project metadata
 # ─────────────────────────────────────────────────────────────────────────────
 [project]
-name            = "crossai-cli"
+name            = "cross-st"
 version         = "0.1.0"
 description     = "AI reports. Cross-examined. Research reports from multiple AI providers, fact-checked against each other."
 readme          = "README.md"
@@ -60,7 +60,7 @@ dependencies = [
 # All TTS packages ship wheels for Python 3.10–3.13 on macOS ARM and Linux.
 # soundfile uses a py2.py3-none platform wheel (any Python version);
 # yakyak is py3-none-any; websockets ships per-version cp310–cp313 wheels.
-# Install with:  pip install "cross-ai[tts]"
+# Install with:  pip install "cross-st[tts]"
 # ─────────────────────────────────────────────────────────────────────────────
 [project.optional-dependencies]
 tts = [
