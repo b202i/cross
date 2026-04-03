@@ -46,16 +46,18 @@ else
     if ! git clone "${WIKI_REPO}" "${WIKI_TMP}" 2>&1; then
         echo ""
         echo "✗ Could not clone the GitHub Wiki repo."
-        echo "  GitHub creates the wiki repo lazily — it doesn't exist until"
-        echo "  you create the first page through the GitHub UI."
+        echo "  GitHub creates the wiki repo lazily — it only exists after"
+        echo "  the first page is created through the GitHub UI."
         echo ""
-        echo "  One-time setup:"
+        echo "  One-time setup (do this once, then re-run this script):"
         echo "    1. Go to https://github.com/b202i/cross/wiki"
         echo "    2. Click 'Create the first page', save with any content"
         echo "    3. Re-run:  bash script/push_wiki.sh"
+        echo "       (HTTPS is fine — credentials are already cached by git)"
         echo ""
-        echo "  Tip: use SSH to avoid HTTPS credential prompts:"
-        echo "    WIKI_SSH=1 bash script/push_wiki.sh"
+        echo "  If you got 'Permission denied (publickey)', your SSH key is"
+        echo "  not registered with GitHub. Use the plain HTTPS default instead:"
+        echo "    bash script/push_wiki.sh   # no WIKI_SSH=1"
         echo ""
         exit 1
     fi
