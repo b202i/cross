@@ -1,0 +1,21 @@
+# Development Dependencies for Cross
+# Install with: pip install -r requirements-dev.txt
+
+# Testing framework
+pytest==8.3.5
+pytest-cov==6.0.0
+pytest-mock==3.14.0
+
+# API mocking and recording
+vcrpy==8.1.1
+responses==0.26.0
+
+# Snapshot testing
+pytest-snapshot==0.9.0
+
+# Time mocking
+freezegun==1.5.5
+
+# Subprocess mocking
+pytest-subprocess==1.5.3
+

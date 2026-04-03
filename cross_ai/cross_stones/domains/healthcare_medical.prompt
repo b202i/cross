@@ -1,0 +1,18 @@
+# Cross-Stone Benchmark Prompt -- Healthcare & Medical Analysis
+
+Write exactly 10 specific, fact-checkable claims about the current state of AI in healthcare, medical diagnostics, and clinical decision support as of 2025-2026.
+
+Each claim must be a clear, declarative statement that a well-informed analyst could verify -- using publicly available sources such as peer-reviewed journals, FDA databases, hospital system reports, or reputable health news outlets -- as True, Partially True, Opinion, Partially False, or False.
+
+Difficulty calibration: Approximately half of the claims should be verifiable with basic research (widely reported statistics or named tools), and half should require consulting primary clinical literature, regulatory filings, or detailed health system data published in 2024-2025.
+
+Claims must not be vague generalizations. Each claim should include specific data points, named systems, FDA clearance details, clinical trial results, percentages, or named institutions where relevant.
+
+Distribute your 10 claims across the following aspects:
+- FDA-cleared or CE-marked AI medical devices: cumulative count, approval trends, and leading categories (radiology, pathology, cardiology)
+- Clinical performance of AI in medical imaging compared to human specialists (sensitivity, specificity, AUC metrics)
+- AI in drug discovery and clinical trial design: timelines, cost reductions, and named examples
+- Deployment and outcomes of AI clinical decision support systems in hospital settings
+- Regulatory, liability, bias, and health equity challenges in medical AI adoption
+
+Format: Return a numbered list of exactly 10 claims with no introductory text, section headers, summaries, or commentary.

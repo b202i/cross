@@ -1,0 +1,12 @@
+# Cross-Stone Benchmark Prompt — Customer Service & Support
+Write exactly 10 specific, fact-checkable claims about the current state of AI in customer service and support automation as of 2025–2026.
+Each claim must be a clear, declarative statement that a well-informed analyst could verify — using publicly available sources such as industry surveys, vendor case studies, analyst reports, or reputable news outlets — as True, Partially True, Opinion, Partially False, or False.
+**Difficulty calibration:** Approximately half of the claims should be verifiable with basic research (widely reported statistics or named platforms), and half should require consulting primary sources, empirical studies, or detailed performance data published in 2024–2025.
+**Claims must not be vague generalizations.** Each claim should include specific data points, named platforms, percentages, benchmark metrics, or named organizations where relevant.
+Distribute your 10 claims across the following aspects:
+- Automation and deflection rates for AI-powered chatbots and virtual agents across industries
+- Customer satisfaction (CSAT) and first-contact resolution quality compared to human agents
+- Adoption rates across specific industries (retail, telecom, banking, healthcare)
+- Integration of large language models (LLMs) into contact center platforms (e.g., Salesforce Einstein, Zendesk AI, AWS Connect)
+- Documented cost savings, ROI metrics, and workforce impact reported by organizations deploying AI in customer service
+**Format:** Return a numbered list of exactly 10 claims with no introductory text, section headers, summaries, or commentary.

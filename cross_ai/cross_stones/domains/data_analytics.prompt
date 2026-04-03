@@ -1,0 +1,18 @@
+# Cross-Stone Benchmark Prompt -- Data Analytics & Business Intelligence
+
+Write exactly 10 specific, fact-checkable claims about the current state of AI in data analytics and business intelligence as of 2025-2026.
+
+Each claim must be a clear, declarative statement that a well-informed analyst could verify -- using publicly available sources such as vendor documentation, industry reports, academic studies, or reputable news outlets -- as True, Partially True, Opinion, Partially False, or False.
+
+Difficulty calibration: Approximately half of the claims should be verifiable with basic research (widely reported statistics or named platforms), and half should require consulting primary sources, empirical studies, or detailed technical documentation published in 2024-2025.
+
+Claims must not be vague generalizations. Each claim should include specific data points, named tools, percentages, benchmark results, or named organizations where relevant.
+
+Distribute your 10 claims across the following aspects:
+- Adoption of AI and ML capabilities in major business intelligence platforms (e.g., Tableau, Microsoft Power BI, Looker, Snowflake Cortex)
+- Impact of large language models on natural-language querying and self-service analytics
+- AI-driven anomaly detection and predictive analytics performance in enterprise settings
+- Accuracy, reliability, and hallucination risks in AI-generated data insights vs. human analysts
+- Data governance, privacy, and explainability challenges in AI-driven analytics deployments
+
+Format: Return a numbered list of exactly 10 claims with no introductory text, section headers, summaries, or commentary.

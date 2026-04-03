@@ -1,0 +1,19 @@
+# Cross-Stone Benchmark Prompt — Software Development & Programming
+
+Write exactly 10 specific, fact-checkable claims about the current state of AI in software development and computer programming as of 2025–2026.
+
+Each claim must be a clear, declarative statement that a well-informed analyst or technical researcher could verify — using publicly available sources such as research papers, vendor reports, official documentation, or reputable news outlets — as True, Partially True, Opinion, Partially False, or False.
+
+**Difficulty calibration:** Approximately half of the claims should be verifiable with basic research (widely reported statistics or named tools), and half should require consulting primary sources, empirical studies, or detailed technical documentation published in 2024–2025.
+
+**Claims must not be vague generalizations.** Each claim should include specific data points, named tools, version numbers, percentages, benchmark names, or named organizations where relevant.
+
+Distribute your 10 claims across the following aspects:
+- Adoption rates and market penetration of AI coding assistants (e.g., GitHub Copilot, Cursor, Claude Code, Gemini Code Assist)
+- Measurable developer productivity impacts: speed, code quality, and defect rates
+- AI's share of code written in enterprise and open-source projects
+- Capabilities and current limitations in automated testing, debugging, and code review
+- Security vulnerabilities, intellectual property concerns, and license compliance issues related to AI-generated code
+
+**Format:** Return a numbered list of exactly 10 claims with no introductory text, section headers, summaries, or commentary.
+

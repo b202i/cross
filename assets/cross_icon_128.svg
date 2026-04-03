@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+
+  <!-- Background -->
+  <rect width="128" height="128" rx="22" fill="#0d1117"/>
+
+  <!-- Cross arms — vertical -->
+  <rect x="54" y="18" width="20" height="92" rx="5" fill="#58a6ff"/>
+  <!-- Cross arms — horizontal -->
+  <rect x="18" y="54" width="92" height="20" rx="5" fill="#58a6ff"/>
+
+</svg>
+

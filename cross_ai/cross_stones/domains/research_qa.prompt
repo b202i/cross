@@ -1,0 +1,18 @@
+# Cross-Stone Benchmark Prompt -- Research, Search & Q&A
+
+Write exactly 10 specific, fact-checkable claims about the current state of AI in research, information retrieval, and question answering as of 2025-2026.
+
+Each claim must be a clear, declarative statement that a well-informed analyst could verify -- using publicly available sources such as benchmark leaderboards, academic papers, product documentation, or reputable technology news outlets -- as True, Partially True, Opinion, Partially False, or False.
+
+Difficulty calibration: Approximately half of the claims should be verifiable with basic research (widely reported benchmark results or named tools), and half should require consulting primary literature, technical evaluations, or detailed capability assessments published in 2024-2025.
+
+Claims must not be vague generalizations. Each claim should include specific benchmark names and scores, named systems, hallucination rates, retrieval accuracy metrics, or named organizations where relevant.
+
+Distribute your 10 claims across the following aspects:
+- Performance of leading AI models on established knowledge and reasoning benchmarks (e.g., MMLU, HLE, BrowseComp, SimpleQA)
+- Hallucination rates and factual accuracy of leading AI models in open-domain Q&A tasks
+- AI-powered research and search tools in academic and scientific settings (e.g., Perplexity, Elicit, Semantic Scholar, Google NotebookLM)
+- AI in systematic literature review, evidence synthesis, and meta-analysis workflows
+- Identified failure modes of AI in multi-step reasoning, temporal reasoning, and complex research tasks
+
+Format: Return a numbered list of exactly 10 claims with no introductory text, section headers, summaries, or commentary.

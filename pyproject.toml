@@ -1,0 +1,140 @@
+[build-system]
+requires = ["setuptools>=78.1.1", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Project metadata
+# ─────────────────────────────────────────────────────────────────────────────
+[project]
+name            = "cross-ai"
+version         = "0.1.0"
+description     = "AI checking AI — research reports from 5 providers, cross-checked by all 5."
+readme          = "README.md"
+license         = {text = "MIT"}
+requires-python = ">=3.10"
+authors         = [{name = "b202i"}]
+keywords        = ["ai", "llm", "fact-check", "research", "cross-check", "benchmark"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing",
+]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Core runtime dependencies  (no-TTS baseline — works on Python 3.10–3.13)
+# ─────────────────────────────────────────────────────────────────────────────
+dependencies = [
+    # AI stack (providers, cache, error handling)
+    "cross-ai-core[all]>=0.4.0",
+    # Discourse posting
+    "pydiscourse>=1.7.0",
+    "requests>=2.32.4",           # CVE-2024-47081    # Data analysis and plotting
+    "matplotlib>=3.10.1",
+    "numpy>=2.2.4",
+    "pandas>=2.2.3",
+    "pillow>=12.1.1",             # CVE-2025-48379, CVE-2026-25990
+    "scipy>=1.15.2",
+    "seaborn>=0.13.2",
+    # Text processing
+    "markdown>=3.7",
+    "tabulate>=0.9.0",
+    "textstat>=0.7.13",
+    "tqdm>=4.67.1",
+    "weasyprint>=68.0",          # st-print — high-quality Markdown → PDF
+    # Environment and utilities
+    "python-dotenv>=1.1.0",
+    "setuptools>=78.1.1",         # CVE-2025-47273
+    "urllib3>=2.6.3",             # CVE-2025-50181/50182 etc.
+]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Optional TTS/audio dependencies
+# All TTS packages ship wheels for Python 3.10–3.13 on macOS ARM and Linux.
+# soundfile uses a py2.py3-none platform wheel (any Python version);
+# yakyak is py3-none-any; websockets ships per-version cp310–cp313 wheels.
+# Install with:  pip install "cross-ai[tts]"
+# ─────────────────────────────────────────────────────────────────────────────
+[project.optional-dependencies]
+tts = [
+    "cmudict>=1.0.32",
+    "pyphen>=0.17.2",
+    "soundfile>=0.13.1",
+    "websockets>=15.0.1",
+    "wyoming>=1.8.0",
+    "yakyak>=1.7.0",
+]
+
+[project.urls]
+Homepage       = "https://github.com/b202i/cross"
+Repository     = "https://github.com/b202i/cross"
+"Bug Tracker"  = "https://github.com/b202i/cross/issues"
+Documentation  = "https://github.com/b202i/cross/wiki"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Entry points — thin wrappers in cross_ai/commands.py dispatch to st-*.py.
+# ─────────────────────────────────────────────────────────────────────────────
+[project.scripts]
+st          = "cross_ai.commands:st"
+st-admin    = "cross_ai.commands:st_admin"
+st-analyze  = "cross_ai.commands:st_analyze"
+st-bang     = "cross_ai.commands:st_bang"
+st-cat      = "cross_ai.commands:st_cat"
+st-cross    = "cross_ai.commands:st_cross"
+st-domain   = "cross_ai.commands:st_domain"
+st-edit     = "cross_ai.commands:st_edit"
+st-fact     = "cross_ai.commands:st_fact"
+st-fetch    = "cross_ai.commands:st_fetch"
+st-find     = "cross_ai.commands:st_find"
+st-fix      = "cross_ai.commands:st_fix"
+st-gen      = "cross_ai.commands:st_gen"
+st-heatmap  = "cross_ai.commands:st_heatmap"
+st-ls       = "cross_ai.commands:st_ls"
+st-man      = "cross_ai.commands:st_man"
+st-merge    = "cross_ai.commands:st_merge"
+st-new      = "cross_ai.commands:st_new"
+st-plot     = "cross_ai.commands:st_plot"
+st-post     = "cross_ai.commands:st_post"
+st-prep     = "cross_ai.commands:st_prep"
+st-print    = "cross_ai.commands:st_print"
+st-read     = "cross_ai.commands:st_read"
+st-rm       = "cross_ai.commands:st_rm"
+st-speak    = "cross_ai.commands:st_speak"
+st-speed    = "cross_ai.commands:st_speed"
+st-stones   = "cross_ai.commands:st_stones"
+st-verdict  = "cross_ai.commands:st_verdict"
+st-voice    = "cross_ai.commands:st_voice"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Setuptools packaging
+#
+# All runtime code lives in the cross_ai/ package.  st-*.py scripts are
+# included as package data (hyphens make them invalid Python module names).
+# commands.py uses runpy.run_path(_HERE/<name>.py) where _HERE is the
+# cross_ai/ directory — correct whether installed or run in editable mode.
+# ─────────────────────────────────────────────────────────────────────────────
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["cross_ai*"]
+
+# Package data: st-*.py scripts + prompt templates + benchmark data
+[tool.setuptools.package-data]
+cross_ai = [
+    "st-*.py",
+    "st.py",
+    "template/*.prompt",
+    "cross_stones/domains/*.prompt",
+    "cross_stones/*.json",
+]
+

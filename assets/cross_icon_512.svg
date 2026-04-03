@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Glow filter for the cross arms -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Subtle inner shadow for depth -->
+    <radialGradient id="bgGrad" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#161b22"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </radialGradient>
+    <!-- Blue gradient for the cross arms -->
+    <linearGradient id="armGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#79c0ff"/>
+      <stop offset="50%" stop-color="#58a6ff"/>
+      <stop offset="100%" stop-color="#388bfd"/>
+    </linearGradient>
+    <!-- AI provider accent dots gradient colors -->
+    <radialGradient id="dot1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff7b72"/>  <!-- Anthropic orange-red -->
+      <stop offset="100%" stop-color="#cf222e"/>
+    </radialGradient>
+    <radialGradient id="dot2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#d2a8ff"/>  <!-- xAI purple -->
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </radialGradient>
+    <radialGradient id="dot3" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#56d364"/>  <!-- OpenAI green -->
+      <stop offset="100%" stop-color="#238636"/>
+    </radialGradient>
+    <radialGradient id="dot4" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#39d3f0"/>  <!-- Perplexity teal -->
+      <stop offset="100%" stop-color="#0891b2"/>
+    </radialGradient>
+    <radialGradient id="dot5" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffa657"/>  <!-- Gemini gold -->
+      <stop offset="100%" stop-color="#d29922"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="90" ry="90" fill="url(#bgGrad)"/>
+
+  <!-- Subtle border -->
+  <rect width="512" height="512" rx="90" ry="90"
+        fill="none" stroke="#30363d" stroke-width="2"/>
+
+  <!-- Cross arms — vertical -->
+  <rect x="218" y="80" width="76" height="352" rx="16" fill="url(#armGrad)" filter="url(#glow)"/>
+  <!-- Cross arms — horizontal -->
+  <rect x="80" y="218" width="352" height="76" rx="16" fill="url(#armGrad)" filter="url(#glow)"/>
+
+  <!-- Center intersection — slightly brighter -->
+  <rect x="218" y="218" width="76" height="76" rx="8" fill="#79c0ff" filter="url(#glow)"/>
+
+  <!-- 5 AI provider accent dots — arranged at the 4 arm-tips and center-top -->
+  <!-- Top tip -->
+  <circle cx="256" cy="112" r="14" fill="url(#dot1)" opacity="0.9"/>
+  <!-- Right tip -->
+  <circle cx="400" cy="256" r="14" fill="url(#dot2)" opacity="0.9"/>
+  <!-- Bottom tip -->
+  <circle cx="256" cy="400" r="14" fill="url(#dot3)" opacity="0.9"/>
+  <!-- Left tip -->
+  <circle cx="112" cy="256" r="14" fill="url(#dot4)" opacity="0.9"/>
+  <!-- Center — 5th AI, slightly larger to anchor the composition -->
+  <circle cx="256" cy="256" r="10" fill="url(#dot5)" opacity="0.95"/>
+
+</svg>
+

@@ -1,0 +1,18 @@
+# Cross-Stone Benchmark Prompt -- Creative Media (Images, Video, Audio)
+
+Write exactly 10 specific, fact-checkable claims about the current state of AI in creative media production -- including image generation, video synthesis, music composition, and audio production -- as of 2025-2026.
+
+Each claim must be a clear, declarative statement that a well-informed analyst could verify -- using publicly available sources such as company announcements, legal filings, industry reports, or reputable technology and entertainment news outlets -- as True, Partially True, Opinion, Partially False, or False.
+
+Difficulty calibration: Approximately half of the claims should be verifiable with basic research (widely reported statistics or named tools), and half should require consulting primary sources, legal records, or detailed technical assessments published in 2024-2025.
+
+Claims must not be vague generalizations. Each claim should include specific data points, named tools, model versions, legal case names, revenue figures, or named organizations where relevant.
+
+Distribute your 10 claims across the following aspects:
+- Capabilities and market adoption of leading AI image and video generation tools (e.g., DALL-E 3, Midjourney v6, Sora, Runway Gen-3, Stable Diffusion)
+- AI in music generation, voice cloning, and audio production: leading tools, capabilities, and commercial deployments
+- Commercial deployment of AI-generated media in advertising, film, publishing, and gaming industries
+- Copyright, intellectual property, and compensation disputes involving AI-generated content (specific cases or legislation)
+- Regulatory responses, platform policies, and industry standards addressing AI-generated deepfakes and synthetic media
+
+Format: Return a numbered list of exactly 10 claims with no introductory text, section headers, summaries, or commentary.

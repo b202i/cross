@@ -1,0 +1,18 @@
+# Cross-Stone Benchmark Prompt -- Education & Learning
+
+Write exactly 10 specific, fact-checkable claims about the current state of AI in education and personalized learning as of 2025-2026.
+
+Each claim must be a clear, declarative statement that a well-informed analyst could verify -- using publicly available sources such as academic research, institutional reports, or reputable news outlets -- as True, Partially True, Opinion, Partially False, or False.
+
+Difficulty calibration: Approximately half of the claims should be verifiable with basic research (widely reported statistics or named platforms), and half should require consulting primary sources, empirical studies, or detailed institutional data published in 2024-2025.
+
+Claims must not be vague generalizations. Each claim should include specific data points, named platforms, percentages, study findings, or named institutions where relevant.
+
+Distribute your 10 claims across the following aspects:
+- Student and educator adoption rates of generative AI tools (e.g., ChatGPT, Khanmigo, Duolingo, Coursera AI)
+- Measured learning outcomes from AI-assisted instruction or tutoring systems
+- Institutional and government policies on AI use in classrooms and assessments
+- AI-powered adaptive learning platforms and the evidence base for their effectiveness
+- Academic integrity concerns, bias, and equity issues in AI-powered education
+
+Format: Return a numbered list of exactly 10 claims with no introductory text, section headers, summaries, or commentary.

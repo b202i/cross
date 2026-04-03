@@ -1,0 +1,57 @@
+{
+  "id": "cross-stones-10",
+  "description": "Standard 10-domain Cross-Stones benchmark set. Locked params ensure scores are directly comparable across runs over time.",
+  "n_claims": 10,
+  "max_fact_score": 200,
+  "domains_dir": "domains",
+  "domains": [
+    {
+      "id": "software_development",
+      "name": "Software Development & Programming"
+    },
+    {
+      "id": "customer_service",
+      "name": "Customer Service & Support"
+    },
+    {
+      "id": "marketing_content",
+      "name": "Marketing & Content Creation"
+    },
+    {
+      "id": "education_learning",
+      "name": "Education & Learning"
+    },
+    {
+      "id": "data_analytics",
+      "name": "Data Analytics & Business Intelligence"
+    },
+    {
+      "id": "healthcare_medical",
+      "name": "Healthcare & Medical Analysis"
+    },
+    {
+      "id": "finance_business",
+      "name": "Finance & Business Decision Making"
+    },
+    {
+      "id": "writing_editing",
+      "name": "Writing, Editing & Summarizing"
+    },
+    {
+      "id": "research_qa",
+      "name": "Research, Search & Q&A"
+    },
+    {
+      "id": "creative_media",
+      "name": "Creative Media (Images, Video, Audio)"
+    }
+  ],
+  "snapshots": [],
+  "speed_baseline": {
+    "gen_seconds": 20.07,
+    "fc_seconds": 91.87,
+    "total_seconds": 111.94,
+    "recorded_date": "2026-03-27",
+    "notes": "Baseline recorded 2026-03-27 \u2014 average across all AI providers.  Future runs faster than 111.9s total will have speed_ratio > 1.0 and cross_stone_score may exceed 1.0, reflecting genuine improvement over the 2026 benchmark era."
+  }
+}

@@ -1,0 +1,83 @@
+# requirements.txt — Pinned dependency versions for reproducible installs
+#
+# PYTHON VERSION: 3.10 or higher (3.11 recommended for maximum compatibility).
+#
+#   MINIMUM 3.10 — three independent reasons:
+#     1. numpy==2.2.x and scipy==1.15.x dropped Python 3.9 support.
+#     2. `match` statements (structural pattern matching) in st-plot.py and
+#        st-voice.py are Python 3.10+ syntax — 3.9 will raise a SyntaxError.
+#     3. Python 3.9 itself is EOL (October 2025).
+#
+#   MAXIMUM — none.  TTS packages (soundfile, yakyak, websockets) ship wheels
+#     for Python 3.10 through 3.13 on macOS ARM64.  soundfile's wheel is
+#     tagged py2.py3-none (any Python version); yakyak is py3-none-any;
+#     websockets ships per-version wheels for cp39–cp313.  No ceiling exists.
+#     3.11 is recommended because it is the version used in active development
+#     and most thoroughly tested, not because of any wheel restriction.
+#
+#   NO-TTS OPTION — to skip audio entirely, use requirements-no-tts.txt.
+#     st-speak, st-voice, and st-prep --mp3/--all will not be available,
+#     but all other commands work normally.
+#
+#   Create the venv with:  python3.11 -m venv .venv
+#
+# VERSIONING STRATEGY:
+#   Direct dependencies are fully pinned (==) for stability and reproducibility.
+#   Transitive dependencies are intentionally NOT pinned here — pip resolves them.
+#   This avoids conflicts when direct deps (e.g. google-genai) update their own
+#   transitive requirements. Run `pip freeze > requirements.frozen.txt` after
+#   install if you need a fully-reproducible snapshot.
+#
+# MAINTENANCE:
+#   - Run `pip list --outdated` periodically to check for updates.
+#   - Run `pip-audit` or use GitHub Dependabot to scan for CVEs automatically.
+#   - After testing an upgrade, update the version here and commit.
+#
+# SECURITY FIXES (March 2026):
+#   pillow    11.2.0 → 12.1.1  CVE-2025-48379, CVE-2026-25990  (HIGH)
+#   requests  2.32.3 → 2.32.4  CVE-2024-47081                  (MEDIUM)
+#   urllib3   2.3.0  → 2.6.3   CVE-2025-50181/50182/66418/66471, CVE-2026-21441 (HIGH/MEDIUM)
+#   setuptools 78.1.0 → 78.1.1 CVE-2025-47273                  (HIGH)
+
+# ── AI providers ─────────────────────────────────────────────────────────────
+cross-ai-core[all]==0.4.0     # AI provider stack (anthropic, openai, gemini, xai, perplexity)
+# anthropic/google-genai/openai are transitive deps of cross-ai-core; re-pinned
+# here explicitly so pip-audit and Dependabot can scan exact developer versions.
+anthropic==0.84.0
+google-genai==1.65.0
+openai==1.70.0
+
+# ── Discourse posting ─────────────────────────────────────────────────────────
+pydiscourse==1.7.0
+requests>=2.32.4             # CVE-2024-47081 — min version enforced for security
+
+# ── Data analysis and plotting ────────────────────────────────────────────────
+matplotlib==3.10.1
+numpy==2.2.4
+pandas==2.2.3
+pillow>=12.1.1               # CVE-2025-48379, CVE-2026-25990 — min version enforced
+scipy==1.15.2
+seaborn==0.13.2
+
+# ── Text processing ───────────────────────────────────────────────────────────
+markdown==3.7                # mmd_web_server.py — render markdown to HTML
+tabulate==0.9.0              # st-fact.py — formatted output tables
+textstat==0.7.13             # st-read.py — reading metrics; 0.7.13+ drops pkg_resources dep
+                             # note: 0.7.13 pulls in nltk, joblib, regex as new transitive deps
+tqdm==4.67.1                 # st-fact.py — paragraph progress bar
+weasyprint==68.1             # st-print.py — high-quality Markdown → PDF (pure-Python via pydyf)
+
+# ── TTS / audio ──────────────────────────────────────────────────────────────
+# These are the yakyak package's own dependencies. Listed here so `pip install -r requirements.txt`
+# produces a fully working environment without a separate yakyak install step.
+cmudict==1.0.32
+pyphen==0.17.2
+soundfile==0.13.1
+websockets==15.0.1
+wyoming>=1.8.0
+
+# ── Environment and utilities ─────────────────────────────────────────────────
+python-dotenv==1.1.0         # .env file loading (all scripts)
+setuptools>=78.1.1           # CVE-2025-47273 — min version enforced
+urllib3>=2.6.3               # CVE-2025-50181/50182 etc — min version enforced
+yakyak==1.7.0                # TTS server client — st-prep.py, st-voice.py
