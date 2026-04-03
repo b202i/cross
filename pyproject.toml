@@ -6,11 +6,11 @@ build-backend = "setuptools.build_meta"
 # Project metadata
 # ─────────────────────────────────────────────────────────────────────────────
 [project]
-name            = "cross-ai"
+name            = "crossai-cli"
 version         = "0.1.0"
-description     = "AI checking AI — research reports from 5 providers, cross-checked by all 5."
+description     = "AI reports. Cross-examined. Research reports from multiple AI providers, fact-checked against each other."
 readme          = "README.md"
-license         = {text = "MIT"}
+license         = "MIT"
 requires-python = ">=3.10"
 authors         = [{name = "b202i"}]
 keywords        = ["ai", "llm", "fact-check", "research", "cross-check", "benchmark"]
@@ -19,7 +19,6 @@ classifiers = [
     "Environment :: Console",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -34,7 +33,7 @@ classifiers = [
 # ─────────────────────────────────────────────────────────────────────────────
 dependencies = [
     # AI stack (providers, cache, error handling)
-    "cross-ai-core[all]>=0.4.0",
+    "cross-ai-core[all]>=0.4.1",
     # Discourse posting
     "pydiscourse>=1.7.0",
     "requests>=2.32.4",           # CVE-2024-47081    # Data analysis and plotting
@@ -74,10 +73,10 @@ tts = [
 ]
 
 [project.urls]
-Homepage       = "https://github.com/b202i/cross"
+Homepage       = "https://crossai.dev"
 Repository     = "https://github.com/b202i/cross"
 "Bug Tracker"  = "https://github.com/b202i/cross/issues"
-Documentation  = "https://github.com/b202i/cross/wiki"
+Documentation  = "https://crossai.dev"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Entry points — thin wrappers in cross_ai/commands.py dispatch to st-*.py.
