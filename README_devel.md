@@ -21,10 +21,23 @@ source .venv/bin/activate
 
 # 4. Install in editable mode (creates st-* entry points in .venv/bin/)
 pip install -e .
+
+# 5. Install dev dependencies (pytest, etc.)
+pip install -r requirements-dev.txt
 ```
 
 `pip install -e .` generates all `st-*` entry points via `[project.scripts]` in
 `pyproject.toml`. The old `script/symbolic_links.bash` step is obsolete.
+
+> ⚠️ **If you rename or move the project directory**, the `.venv` breaks because
+> it hardcodes absolute paths in every entry-point shebang and activation script.
+> Recreate it:
+> ```bash
+> rm -rf .venv
+> python3.11 -m venv .venv
+> source .venv/bin/activate
+> pip install -e . && pip install -r requirements-dev.txt
+> ```
 
 For full install instructions see [README_install.md](README_install.md).
 
