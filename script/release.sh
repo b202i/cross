@@ -27,15 +27,19 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
 
-# Auto-select Python: prefer an explicit override, else the first interpreter
-# that has pytest (handles systems where python3 → 3.14 but packages are in 3.11).
+# Auto-select Python: prefer an explicit override, then the project .venv,
+# then the first system interpreter that has pytest installed.
 if [[ -z "${PYTHON:-}" ]]; then
-    for _py in python3.11 python3.12 python3.10 python3; do
-        if command -v "$_py" &>/dev/null && "$_py" -m pytest --version &>/dev/null 2>&1; then
-            PYTHON="$_py"; break
-        fi
-    done
-    PYTHON="${PYTHON:-python3}"
+    if [[ -x "$REPO_ROOT/.venv/bin/python" ]] && "$REPO_ROOT/.venv/bin/python" -m pytest --version &>/dev/null 2>&1; then
+        PYTHON="$REPO_ROOT/.venv/bin/python"
+    else
+        for _py in python3.11 python3.12 python3.10 python3; do
+            if command -v "$_py" &>/dev/null && "$_py" -m pytest --version &>/dev/null 2>&1; then
+                PYTHON="$_py"; break
+            fi
+        done
+        PYTHON="${PYTHON:-python3}"
+    fi
 fi
 
 DRY=0
