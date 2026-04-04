@@ -18,7 +18,7 @@ st-gen --no-cache subject.prompt        # bypass API cache
 st-gen --no-prep subject.prompt         # store raw data only, skip st-prep
 ```
 
-Options: --ai  --no-cache  --no-prep  --bang  -v  -q
+Options: --ai  --no-cache  --no-prep  --bang  --ai-title  --ai-short  --ai-caption  --ai-summary  --ai-story  -v  -q
 """
 import argparse
 import hashlib
@@ -34,6 +34,87 @@ from ai_handler import process_prompt, get_ai_list, get_default_ai, get_usage, c
 from mmd_util import create_block_file, tmp_safe_name, get_tmp_dir
 
 USE_CACHE = True
+
+
+# ── AI content-generation helpers (--ai-title / --ai-short / etc.) ────────────
+
+def _build_story_ai_prompt(context: str, content_type: str) -> str:
+    """Build an AI prompt for story-based content generation."""
+    base = f"{context}\n\n---\n"
+    if content_type == "title":
+        return base + (
+            "Write a TITLE for this article. Max 10 words. "
+            "Capture the core topic and key insight. "
+            "No markdown, no quotes. Plain text, single line."
+        )
+    elif content_type == "short":
+        return base + (
+            "Write a SHORT SUMMARY (max 80 words, 1 paragraph). "
+            "Lead with the main finding or takeaway. "
+            "Plain text, no markdown, no headers."
+        )
+    elif content_type == "caption":
+        return base + """Write a CAPTION (100–160 words, exactly 2 paragraphs).
+
+Paragraph 1 — Context and main findings:
+  Introduce the topic and state the key result.
+  What question does this article address, and what is the answer?
+
+Paragraph 2 — Significance and implications:
+  Why does this matter? Close with a strong, specific sentence.
+
+Plain text, no markdown headers."""
+    elif content_type == "summary":
+        return base + """Write a SUMMARY (120–200 words, 3 short paragraphs).
+
+Paragraph 1 — Topic and purpose: What is this about?
+Paragraph 2 — Key findings: What are the main results or arguments?
+  Be specific — cite numbers or named claims where relevant.
+Paragraph 3 — Bottom line: One clear sentence on the takeaway.
+
+Plain text, no markdown headers."""
+    elif content_type == "story":
+        return base + """Write a COMPREHENSIVE ARTICLE (800–1200 words).
+
+STRUCTURE:
+1. Title (≤10 words, punchy)
+2. Introduction — hook the reader with the key finding
+3. Body sections (use ## headers) — key themes, findings, implications
+4. Conclusion — clear takeaway
+
+Reference specific facts or figures from the source material above.
+Plain text with ## headers."""
+    else:
+        raise ValueError(f"Unknown content_type: {content_type}")
+
+
+def _run_story_ai_content(args, story_text: str, story_title: str, ai_make: str):
+    """Generate and print AI content from a story. Dispatches over enabled flags."""
+    from ai_handler import process_prompt, get_content
+    context = f"ARTICLE TITLE: {story_title}\n\nARTICLE TEXT:\n{story_text}"
+    content_type_map = [
+        (args.ai_title,   "title",   "Title"),
+        (args.ai_short,   "short",   "Short Summary"),
+        (args.ai_caption, "caption", "Caption"),
+        (args.ai_summary, "summary", "Summary"),
+        (args.ai_story,   "story",   "Story"),
+    ]
+    for flag, ctype, label in content_type_map:
+        if not flag:
+            continue
+        if not args.quiet:
+            print(f"\n{label}:")
+            print("─" * 70)
+        prompt = _build_story_ai_prompt(context, ctype)
+        try:
+            result  = process_prompt(ai_make, prompt, use_cache=args.cache)
+            _, _, response, _ = result
+            content = get_content(ai_make, response).strip()
+            print(content)
+        except Exception as e:
+            print(f"  Generation failed ({ctype}): {e}")
+        if not args.quiet:
+            print("─" * 70)
 
 
 def main():
@@ -60,6 +141,20 @@ def main():
                         help='Enable verbose output, default is verbose')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='Enable minimal output')
+
+    ai_group = parser.add_argument_group(
+        'AI content generation (runs after generation, uses story text)')
+    ai_group.add_argument('--ai-title',   action='store_true',
+                          help='Generate a title (max 10 words) → stdout')
+    ai_group.add_argument('--ai-short',   action='store_true',
+                          help='Generate a short summary (max 80 words) → stdout')
+    ai_group.add_argument('--ai-caption', action='store_true',
+                          help='Generate a caption (100–160 words) → stdout')
+    ai_group.add_argument('--ai-summary', action='store_true',
+                          help='Generate a summary (120–200 words) → stdout')
+    ai_group.add_argument('--ai-story',   action='store_true',
+                          help='Generate a comprehensive story (800–1200 words) → stdout')
+
     args = parser.parse_args()
 
     # The user can define an output prefix, otherwise default to the prompt prefix
@@ -233,6 +328,25 @@ def main():
             bang_param = f"--bang {args.bang}"
         cmd = f"st-prep {bang_param} -d {data_select} {file_json}".split()
         subprocess.run(cmd)
+
+    # ── AI content generation (appended after story is generated + prepped) ──
+    ai_requested = (args.ai_title or args.ai_short or args.ai_caption
+                    or args.ai_summary or args.ai_story)
+    if ai_requested and args.bang < 0:
+        # Prefer prepped story text from container; fall back to raw API content
+        story_text  = content_check
+        story_title = ""
+        try:
+            with open(file_json) as _f:
+                _out = json.load(_f)
+            _stories = _out.get("story", [])
+            if _stories:
+                _last = _stories[-1]
+                story_text  = _last.get("text", content_check)
+                story_title = _last.get("title", "")
+        except Exception:
+            pass
+        _run_story_ai_content(args, story_text, story_title, args.ai)
 
 
 if __name__ == "__main__":

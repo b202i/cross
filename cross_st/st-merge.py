@@ -30,6 +30,8 @@ Usage:
   st-merge --quality file.json              # force quality mode (fails if no data)
   st-merge --ai anthropic file.json         # synthesizer AI for simple mode only
   st-merge --base 3 file.json               # use story 3 as base (its AI rewrites)
+  st-merge --ai-caption file.json           # merge + generate short caption
+  st-merge --ai-title file.json             # merge + generate title
 
 Output:
   Appends a new story to the .json container. The merged story records which
@@ -396,6 +398,86 @@ Original prompt this report was written from:
     return prompt.strip(), weak_count
 
 
+# ── AI content-generation helpers (--ai-title / --ai-short / etc.) ────────────
+
+def _build_story_ai_prompt(context: str, content_type: str) -> str:
+    """Build an AI prompt for story-based content generation."""
+    base = f"{context}\n\n---\n"
+    if content_type == "title":
+        return base + (
+            "Write a TITLE for this article. Max 10 words. "
+            "Capture the core topic and key insight. "
+            "No markdown, no quotes. Plain text, single line."
+        )
+    elif content_type == "short":
+        return base + (
+            "Write a SHORT SUMMARY (max 80 words, 1 paragraph). "
+            "Lead with the main finding or takeaway. "
+            "Plain text, no markdown, no headers."
+        )
+    elif content_type == "caption":
+        return base + """Write a CAPTION (100–160 words, exactly 2 paragraphs).
+
+Paragraph 1 — Context and main findings:
+  Introduce the topic and state the key result.
+  What question does this article address, and what is the answer?
+
+Paragraph 2 — Significance and implications:
+  Why does this matter? Close with a strong, specific sentence.
+
+Plain text, no markdown headers."""
+    elif content_type == "summary":
+        return base + """Write a SUMMARY (120–200 words, 3 short paragraphs).
+
+Paragraph 1 — Topic and purpose: What is this about?
+Paragraph 2 — Key findings: What are the main results or arguments?
+  Be specific — cite numbers or named claims where relevant.
+Paragraph 3 — Bottom line: One clear sentence on the takeaway.
+
+Plain text, no markdown headers."""
+    elif content_type == "story":
+        return base + """Write a COMPREHENSIVE ARTICLE (800–1200 words).
+
+STRUCTURE:
+1. Title (≤10 words, punchy)
+2. Introduction — hook the reader with the key finding
+3. Body sections (use ## headers) — key themes, findings, implications
+4. Conclusion — clear takeaway
+
+Reference specific facts or figures from the source material above.
+Plain text with ## headers."""
+    else:
+        raise ValueError(f"Unknown content_type: {content_type}")
+
+
+def _run_story_ai_content(args, story_text: str, story_title: str, ai_make: str):
+    """Generate and print AI content from a story. Dispatches over enabled flags."""
+    context = f"ARTICLE TITLE: {story_title}\n\nARTICLE TEXT:\n{story_text}"
+    content_type_map = [
+        (args.ai_title,   "title",   "Title"),
+        (args.ai_short,   "short",   "Short Summary"),
+        (args.ai_caption, "caption", "Caption"),
+        (args.ai_summary, "summary", "Summary"),
+        (args.ai_story,   "story",   "Story"),
+    ]
+    for flag, ctype, label in content_type_map:
+        if not flag:
+            continue
+        if not args.quiet:
+            print(f"\n{label}:")
+            print("─" * 70)
+        prompt = _build_story_ai_prompt(context, ctype)
+        try:
+            result  = process_prompt(ai_make, prompt, use_cache=args.cache)
+            _, _, response, _ = result
+            content = get_content(ai_make, response).strip()
+            print(content)
+        except Exception as e:
+            print(f"  Generation failed ({ctype}): {e}")
+        if not args.quiet:
+            print("─" * 70)
+
+
 def get_avg_score(story_entry):
     """Return the average fact-check score across all fact entries for a story,
     or None if no fact-check data exists."""
@@ -461,6 +543,19 @@ def main():
                         help='Enable verbose output')
     parser.add_argument('-q', '--quiet', action='store_true',
                         help='Enable minimal output')
+
+    ai_group = parser.add_argument_group(
+        'AI content generation (runs after merge, uses merged story text)')
+    ai_group.add_argument('--ai-title',   action='store_true',
+                          help='Generate a title (max 10 words) → stdout')
+    ai_group.add_argument('--ai-short',   action='store_true',
+                          help='Generate a short summary (max 80 words) → stdout')
+    ai_group.add_argument('--ai-caption', action='store_true',
+                          help='Generate a caption (100–160 words) → stdout')
+    ai_group.add_argument('--ai-summary', action='store_true',
+                          help='Generate a summary (120–200 words) → stdout')
+    ai_group.add_argument('--ai-story',   action='store_true',
+                          help='Generate a comprehensive story (800–1200 words) → stdout')
 
     args = parser.parse_args()
 
@@ -835,6 +930,15 @@ def main():
         except Exception as e:
             if not args.quiet:
                 print(f"  Post-merge fact-check error: {e}")
+
+    # ── AI content generation (appended after merge) ─────────────────────────
+    if args.ai_title or args.ai_short or args.ai_caption or args.ai_summary or args.ai_story:
+        if container_modified:
+            _run_story_ai_content(
+                args, story.get("text", ""), story.get("title", ""), args.ai)
+        else:
+            if not args.quiet:
+                print("  (AI content skipped — no new story was added)")
 
 
 if __name__ == "__main__":
