@@ -27,6 +27,17 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO_ROOT"
 
+# Auto-select Python: prefer an explicit override, else the first interpreter
+# that has pytest (handles systems where python3 → 3.14 but packages are in 3.11).
+if [[ -z "${PYTHON:-}" ]]; then
+    for _py in python3.11 python3.12 python3.10 python3; do
+        if command -v "$_py" &>/dev/null && "$_py" -m pytest --version &>/dev/null 2>&1; then
+            PYTHON="$_py"; break
+        fi
+    done
+    PYTHON="${PYTHON:-python3}"
+fi
+
 DRY=0
 if [[ "${1:-}" == "--dry" ]]; then
     DRY=1
@@ -39,12 +50,12 @@ _ok()      { echo "  ✅  $1"; }
 _err()     { echo "  ❌  $1" >&2; exit 1; }
 
 # ── Read version from pyproject.toml ──────────────────────────────────────────
-VERSION="$(python3 -c "
+VERSION="$($PYTHON -c "
 import tomllib, pathlib
 with open('pyproject.toml', 'rb') as f:
     d = tomllib.load(f)
 print(d['project']['version'])
-" 2>/dev/null || python3 -c "
+" 2>/dev/null || $PYTHON -c "
 import re, pathlib
 m = re.search(r'^version\s*=\s*\"([^\"]+)\"', pathlib.Path('pyproject.toml').read_text(), re.M)
 print(m.group(1)) if m else exit(1)
@@ -74,7 +85,7 @@ _ok "Working tree is clean"
 
 # ── 2. Tests ──────────────────────────────────────────────────────────────────
 _section "2. Test suite"
-python3 -m pytest tests/ -q --tb=short
+$PYTHON -m pytest tests/ -q --tb=short
 _ok "All tests pass"
 
 # ── 3. Clean dist/ ────────────────────────────────────────────────────────────
@@ -84,13 +95,13 @@ _ok "Stale artefacts removed"
 
 # ── 4. Build ──────────────────────────────────────────────────────────────────
 _section "4. Build sdist + wheel"
-python3 -m build
+$PYTHON -m build
 _ok "Build complete"
 ls -lh dist/
 
 # ── 5. Twine check ────────────────────────────────────────────────────────────
 _section "5. twine check"
-python3 -m twine check dist/*
+$PYTHON -m twine check dist/*
 _ok "Distribution checks passed"
 
 if [[ $DRY -eq 1 ]]; then
@@ -103,7 +114,7 @@ fi
 
 # ── 6. Upload to PyPI ─────────────────────────────────────────────────────────
 _section "6. twine upload → PyPI"
-python3 -m twine upload dist/*
+$PYTHON -m twine upload dist/*
 _ok "Uploaded to PyPI: https://pypi.org/project/cross-st/${VERSION}/"
 
 # ── 7. Tag and push ───────────────────────────────────────────────────────────
