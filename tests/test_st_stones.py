@@ -966,6 +966,12 @@ class TestIntegrationPizzaDough:
 
 class TestMainCLI:
 
+    @pytest.fixture(autouse=True)
+    def _bypass_require_config(self):
+        """Patch require_config to a no-op so CI (no ~/.crossenv) can call main()."""
+        with patch.object(st_stones, "require_config"):
+            yield
+
     def test_main_runs_with_directory(self, tmp_path, capsys):
         """--help should print usage and exit 0."""
         with pytest.raises(SystemExit) as exc:
