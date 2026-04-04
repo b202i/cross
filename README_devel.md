@@ -43,42 +43,48 @@ For full install instructions see [README_install.md](README_install.md).
 
 ## Running dev commands alongside a pipx install
 
-If you also have `cross-st` installed via `pipx` (e.g. for end-user testing),
-pipx adds its own `st-*` binaries to `~/.local/bin/`. **zsh caches command
-locations** in a hash table, so `which st-admin` may still return the pipx
-path even after activating the dev venv.
+There are **two independent `st-*` installs** on this machine:
 
-**Fix — run `rehash` after activation:**
+| Install | Binary path | Source |
+|---------|-------------|--------|
+| pipx (always-on) | `~/.local/bin/st-admin` | `~/github/cross-st/cross_st/` ← editable |
+| dev venv | `.venv/bin/st-admin` | `~/github/cross-st/cross_st/` ← editable |
+
+Both are **editable installs** pointing at the same source tree.  Editing any
+`st-*.py` file is immediately live in **both** — no reinstall step needed.
+
+### Normal development workflow (no venv activation required)
+
+```zsh
+# Just edit the source and run — changes are live immediately:
+vi ~/github/cross-st/cross_st/st-admin.py
+st-admin --show             # picks up the edit instantly via pipx
+```
+
+### If you need the dev venv explicitly
 
 ```zsh
 cd ~/github/cross-st
 source .venv/bin/activate
-rehash                     # clears zsh's command-location cache
-which st-admin             # → .../cross-st/.venv/bin/st-admin  ✓
+rehash                      # clears zsh's command-location cache
+which st-admin              # → .../cross-st/.venv/bin/st-admin  ✓
 ```
 
-**Verify the right version is active:**
+### Keeping the pipx install in sync after a repo change
+
+The pipx install is editable, so source changes are live automatically.
+The only time you need to reinstall is after changing `pyproject.toml`
+(e.g. adding a new `[project.scripts]` entry or a new dependency):
 
 ```zsh
-st-admin --version         # if implemented, shows dev version
-whence -p st-admin         # PATH-only lookup, always bypasses the hash
+pipx install --editable ~/github/cross-st --force
 ```
 
-**Use explicit path if you need a quick one-off without rehashing:**
+### Verify which install is active
 
 ```zsh
-.venv/bin/st-admin --show
-.venv/bin/st-cross my_story.json
-```
-
-**Optional — shell helper in `~/.zshrc`** to auto-rehash on venv activation:
-
-```zsh
-function venv() {
-    source "${1:-.venv}/bin/activate" && rehash
-}
-# Usage:  venv          (activates .venv in CWD)
-#         venv path/to/other/.venv
+which st-admin              # shows the binary being used
+st-admin --show             # Paths section shows actual config/cache dirs
 ```
 
 ## Development notes
