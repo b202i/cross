@@ -133,7 +133,11 @@ fi
 # ── 6. st-man renders without error ──────────────────────────────────────────
 echo
 echo "  6. st-man"
-if run st-man 2>&1 | grep -qi "cross\|usage\|command"; then
+# Capture first — piping directly causes a broken-pipe race: grep -q exits on
+# the first match while st-man is still writing; Python raises BrokenPipeError
+# → non-zero exit → pipefail makes the `if` condition false.
+SMAN_OUT="$(run st-man 2>&1 || true)"
+if grep -qi "cross\|usage\|command" <<<"$SMAN_OUT"; then
     _ok "st-man produces output"
 else
     _fail "st-man produced no recognisable output"
