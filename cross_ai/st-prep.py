@@ -159,7 +159,7 @@ def main():
             from yakyak import is_server_online, piper_tts_server
         except ImportError:
             print("Error: TTS packages not installed.  "
-                  "Run: pip install yakyak soundfile cmudict pyphen wyoming websockets",
+                  "Run: pipx install --force cross-st",
                   file=sys.stderr)
             sys.exit(1)
 

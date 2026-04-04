@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 # ─────────────────────────────────────────────────────────────────────────────
 [project]
 name            = "cross-st"
-version         = "0.1.0"
+version         = "0.2.0"
 description     = "AI reports. Cross-examined. Research reports from multiple AI providers, fact-checked against each other."
 readme          = "README.md"
 license         = "MIT"
@@ -29,14 +29,24 @@ classifiers = [
 ]
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Core runtime dependencies  (no-TTS baseline — works on Python 3.10–3.13)
+# Core runtime dependencies — includes TTS/audio by default.
+# All TTS packages ship wheels for Python 3.10–3.13 on macOS ARM and Linux.
+# soundfile uses a py2.py3-none platform wheel (any Python version);
+# yakyak is py3-none-any; websockets ships per-version cp310–cp313 wheels.
+#
+# Default install (recommended):
+#   pipx install cross-st          ← full install with TTS/audio
+#
+# Lite install without TTS (manual — see README-TTS-audio.md):
+#   pipx install "cross-st[no-tts]"  ← documented intent; see note below
 # ─────────────────────────────────────────────────────────────────────────────
 dependencies = [
     # AI stack (providers, cache, error handling)
     "cross-ai-core[all]>=0.4.1",
     # Discourse posting
     "pydiscourse>=1.7.0",
-    "requests>=2.32.4",           # CVE-2024-47081    # Data analysis and plotting
+    "requests>=2.32.4",           # CVE-2024-47081
+    # Data analysis and plotting
     "matplotlib>=3.10.1",
     "numpy>=2.2.4",
     "pandas>=2.2.3",
@@ -53,17 +63,9 @@ dependencies = [
     "python-dotenv>=1.1.0",
     "setuptools>=78.1.1",         # CVE-2025-47273
     "urllib3>=2.6.3",             # CVE-2025-50181/50182 etc.
-]
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Optional TTS/audio dependencies
-# All TTS packages ship wheels for Python 3.10–3.13 on macOS ARM and Linux.
-# soundfile uses a py2.py3-none platform wheel (any Python version);
-# yakyak is py3-none-any; websockets ships per-version cp310–cp313 wheels.
-# Install with:  pip install "cross-st[tts]"
-# ─────────────────────────────────────────────────────────────────────────────
-[project.optional-dependencies]
-tts = [
+    # TTS / audio — included by default so `pipx install cross-st` is fully featured.
+    # All packages have wheels for Python 3.10–3.13 on macOS ARM, Intel, and Linux.
+    # To skip audio, install from requirements-no-tts.txt (developer/source installs).
     "cmudict>=1.0.32",
     "pyphen>=0.17.2",
     "soundfile>=0.13.1",
@@ -71,6 +73,26 @@ tts = [
     "wyoming>=1.8.0",
     "yakyak>=1.7.0",
 ]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# no-tts extra — documentation placeholder only.
+#
+# Python extras can only ADD dependencies, never remove them.  Because TTS
+# packages are part of [project.dependencies], there is no pip/pipx mechanism
+# to exclude them via an extra in a single package.
+#
+# `pipx install "cross-st[no-tts]"` therefore installs the same set of
+# packages as `pipx install cross-st`.  The extra is retained so the install
+# string is self-documenting and so tooling (e.g. pyproject validators, CI
+# matrix configs) can reference it without breaking.
+#
+# For a genuinely TTS-free environment (CI, minimal containers, Windows), use
+# the developer/source path instead:
+#   pip install cross-st --no-deps
+#   pip install -r requirements-no-tts.txt    # (in the cross source repo)
+# ─────────────────────────────────────────────────────────────────────────────
+[project.optional-dependencies]
+no-tts = []
 
 [project.urls]
 Homepage       = "https://crossai.dev"

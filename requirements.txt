@@ -15,9 +15,10 @@
 #     3.11 is recommended because it is the version used in active development
 #     and most thoroughly tested, not because of any wheel restriction.
 #
-#   NO-TTS OPTION — to skip audio entirely, use requirements-no-tts.txt.
-#     st-speak, st-voice, and st-prep --mp3/--all will not be available,
-#     but all other commands work normally.
+#   NO-TTS OPTION — to skip audio entirely in a developer/source install, use
+#     requirements-no-tts.txt.  PyPI users (`pipx install cross-st`) always get
+#     TTS because it is in [project.dependencies]; the [no-tts] extra is a
+#     documentation placeholder only — see README-TTS-audio.md for details.
 #
 #   Create the venv with:  python3.11 -m venv .venv
 #

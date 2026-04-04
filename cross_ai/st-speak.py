@@ -42,7 +42,7 @@ try:
     from yakyak import piper_tts_server
 except ImportError:
     print("Error: st-speak requires TTS packages.  "
-          "Run: pip install yakyak soundfile cmudict pyphen wyoming websockets",
+          "Run: pipx install --force cross-st",
           file=sys.stderr)
     sys.exit(1)
 

@@ -93,10 +93,10 @@ All branches are fully compatible with Cross.
 
 ```bash
 # Recommended: pipx (isolated, no venv management)
-pipx install "cross-st[tts]"
+pipx install cross-st          # full install — TTS included by default
 
 # Or inside a project venv:
-pip install "cross-st[tts]"
+pip install cross-st
 # or from requirements.txt:
 pip install -r requirements.txt
 ```
@@ -107,7 +107,7 @@ If you want the latest Python:
 
 ```bash
 brew install python@3.12   # or @3.10, @3.11, @3.13 — all work
-pipx install --python python3.12 "cross-st[tts]"
+pipx install --python python3.12 cross-st
 ```
 
 ### Linux — Debian / Ubuntu
@@ -121,9 +121,9 @@ sudo apt install libsndfile1 ffmpeg
 sudo apt install python3.11 python3.11-venv   # or 3.10, 3.12, 3.13
 
 # 3. Install Cross with TTS
-pipx install "cross-st[tts]"
+pipx install cross-st
 # or inside a venv:
-pip install "cross-st[tts]"
+pip install cross-st
 ```
 
 > **Why `libsndfile1`?**  On Linux, `soundfile` uses a pure-Python wheel that
@@ -144,14 +144,14 @@ Then set `AUDIO_PLAYER=mpv` in `~/.crossenv` if Cross doesn't detect it automati
 
 ```bash
 sudo dnf install libsndfile ffmpeg python3.11
-pipx install "cross-st[tts]"
+pipx install cross-st
 ```
 
 ### Linux — Arch
 
 ```bash
 sudo pacman -S libsndfile ffmpeg python
-pipx install "cross-st[tts]"
+pipx install cross-st
 ```
 
 ### Windows
@@ -281,19 +281,38 @@ Good starting voices: `en_US-lessac-medium`, `en_US-ryan-high`, `en_US-libritts-
 All commands except `st-speak`, `st-voice`, and `st-prep --mp3`/`--all` work
 without TTS packages installed.
 
-Install without TTS:
+`pipx install cross-st` installs TTS by default (recommended for most users).
+
+To install without TTS on a minimal system (CI, containers, Windows without WSL2):
 
 ```bash
-pipx install cross-st                  # PyPI
-# or from source:
+# Option A — install from the source repo (developer/contributor installs)
 pip install -r requirements-no-tts.txt
+
+# Option B — install from PyPI and immediately uninstall the TTS packages
+pip install cross-st
+pip uninstall -y cmudict pyphen soundfile websockets wyoming yakyak
 ```
 
-If you run a TTS command without the packages, Cross exits with a helpful message:
+> **Why can't `pipx install "cross-st[no-tts]"` skip TTS?**
+> Python extras can only *add* dependencies to a package, never remove them.
+> Because TTS packages are part of `cross-st`'s core dependencies, no extras
+> mechanism can exclude them in a single-package install.  The `[no-tts]` extra
+> exists as a documentation signal — it installs the same full set as
+> `pipx install cross-st`.  The uninstall workaround above is the supported
+> path for genuinely TTS-free environments.
+
+If you run a TTS command without the packages present, Cross exits cleanly:
 
 ```
 Error: st-speak requires TTS packages.
-Run: pip install "cross-st[tts]"  or  pipx install "cross-st[tts]"
+Run: pipx install --force cross-st
+```
+
+To restore TTS to an existing install:
+
+```bash
+pipx install --force cross-st
 ```
 
 ---

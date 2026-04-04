@@ -255,5 +255,6 @@ Then point PyCharm at `.venv/bin/python` again.
 - `cross-story` is a separate private repo cloned independently alongside `cross`.
   If you don't have access, create an empty directory: `mkdir ~/github/cross/story`.
 - Cross is published to PyPI as `cross-st`. Users install with `pipx install cross-st`
-  (or `pip install cross-st`); the symlink script is no longer needed.
+  (or `pip install cross-st`); TTS/audio is included by default. The symlink script
+  is no longer needed for PyPI installs.
 
