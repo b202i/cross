@@ -29,16 +29,14 @@ classifiers = [
 ]
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Core runtime dependencies — includes TTS/audio by default.
-# All TTS packages ship wheels for Python 3.10–3.13 on macOS ARM and Linux.
-# soundfile uses a py2.py3-none platform wheel (any Python version);
-# yakyak is py3-none-any; websockets ships per-version cp310–cp313 wheels.
+# Core runtime dependencies  (no-TTS baseline — works on Python 3.10–3.13)
 #
-# Default install (recommended):
-#   pipx install cross-st          ← full install with TTS/audio
+# Default install:
+#   pipx install cross-st            ← fast, no audio — all research commands work
 #
-# Lite install without TTS (manual — see README-TTS-audio.md):
-#   pipx install "cross-st[no-tts]"  ← documented intent; see note below
+# With TTS/audio:
+#   pipx install "cross-st[tts]"    ← adds st-speak, st-voice, st-prep --mp3
+#   (also requires a running Wyoming Piper server — see README-TTS-audio.md)
 # ─────────────────────────────────────────────────────────────────────────────
 dependencies = [
     # AI stack (providers, cache, error handling)
@@ -63,9 +61,22 @@ dependencies = [
     "python-dotenv>=1.1.0",
     "setuptools>=78.1.1",         # CVE-2025-47273
     "urllib3>=2.6.3",             # CVE-2025-50181/50182 etc.
-    # TTS / audio — included by default so `pipx install cross-st` is fully featured.
-    # All packages have wheels for Python 3.10–3.13 on macOS ARM, Intel, and Linux.
-    # To skip audio, install from requirements-no-tts.txt (developer/source installs).
+]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Optional TTS/audio dependencies
+# All TTS packages ship wheels for Python 3.10–3.13 on macOS ARM and Linux.
+# soundfile uses a py2.py3-none platform wheel (any Python version);
+# yakyak is py3-none-any; websockets ships per-version cp310–cp313 wheels.
+#
+# Installing these packages is only half the story — TTS also requires a
+# running Wyoming Piper server (Docker or native).  See README-TTS-audio.md.
+#
+# Install with:  pipx install "cross-st[tts]"
+# Inject later:  pipx inject cross-st cmudict pyphen soundfile websockets wyoming yakyak
+# ─────────────────────────────────────────────────────────────────────────────
+[project.optional-dependencies]
+tts = [
     "cmudict>=1.0.32",
     "pyphen>=0.17.2",
     "soundfile>=0.13.1",
@@ -74,25 +85,6 @@ dependencies = [
     "yakyak>=1.7.0",
 ]
 
-# ─────────────────────────────────────────────────────────────────────────────
-# no-tts extra — documentation placeholder only.
-#
-# Python extras can only ADD dependencies, never remove them.  Because TTS
-# packages are part of [project.dependencies], there is no pip/pipx mechanism
-# to exclude them via an extra in a single package.
-#
-# `pipx install "cross-st[no-tts]"` therefore installs the same set of
-# packages as `pipx install cross-st`.  The extra is retained so the install
-# string is self-documenting and so tooling (e.g. pyproject validators, CI
-# matrix configs) can reference it without breaking.
-#
-# For a genuinely TTS-free environment (CI, minimal containers, Windows), use
-# the developer/source path instead:
-#   pip install cross-st --no-deps
-#   pip install -r requirements-no-tts.txt    # (in the cross source repo)
-# ─────────────────────────────────────────────────────────────────────────────
-[project.optional-dependencies]
-no-tts = []
 
 [project.urls]
 Homepage       = "https://crossai.dev"

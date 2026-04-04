@@ -159,7 +159,7 @@ def main():
             from yakyak import is_server_online, piper_tts_server
         except ImportError:
             print("Error: TTS packages not installed.  "
-                  "Run: pipx install --force cross-st",
+                  "Run: pipx install --force \"cross-st[tts]\"",
                   file=sys.stderr)
             sys.exit(1)
 

@@ -44,7 +44,7 @@ try:
     from yakyak import piper_tts_server
 except ImportError:
     print("Error: st-voice requires TTS packages.  "
-          "Run: pipx install --force cross-st",
+          "Run: pipx install --force \"cross-st[tts]\"",
           file=sys.stderr)
     sys.exit(1)
 

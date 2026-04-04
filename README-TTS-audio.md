@@ -93,10 +93,10 @@ All branches are fully compatible with Cross.
 
 ```bash
 # Recommended: pipx (isolated, no venv management)
-pipx install cross-st          # full install — TTS included by default
+pipx install "cross-st[tts]"
 
 # Or inside a project venv:
-pip install cross-st
+pip install "cross-st[tts]"
 # or from requirements.txt:
 pip install -r requirements.txt
 ```
@@ -121,9 +121,9 @@ sudo apt install libsndfile1 ffmpeg
 sudo apt install python3.11 python3.11-venv   # or 3.10, 3.12, 3.13
 
 # 3. Install Cross with TTS
-pipx install cross-st
+pipx install "cross-st[tts]"
 # or inside a venv:
-pip install cross-st
+pip install "cross-st[tts]"
 ```
 
 > **Why `libsndfile1`?**  On Linux, `soundfile` uses a pure-Python wheel that
@@ -144,7 +144,7 @@ Then set `AUDIO_PLAYER=mpv` in `~/.crossenv` if Cross doesn't detect it automati
 
 ```bash
 sudo dnf install libsndfile ffmpeg python3.11
-pipx install cross-st
+pipx install "cross-st[tts]"
 ```
 
 ### Linux — Arch
