@@ -31,24 +31,34 @@ Then **restart your terminal** (or open a new one) so the updated PATH takes eff
 pipx install cross-st
 ```
 
-### 3. Set up API keys
+### 3. Set up API keys and Discourse
+
+**What you'll need before running this:**
+
+| What | Required? | Notes |
+|---|---|---|
+| AI API key (at least one) | ✅ Required | [Google Gemini](https://aistudio.google.com/app/apikey) is free — no credit card. Others: [Anthropic](https://console.anthropic.com), [OpenAI](https://platform.openai.com/api-keys), [xAI](https://console.x.ai), [Perplexity](https://perplexity.ai/settings/api) |
+| Discourse forum credentials | Optional | Only needed if you want to publish reports to a forum. Skip if unsure. |
 
 ```bash
 st-admin --setup
 ```
 
-The wizard prompts for each provider key and saves them to `~/.crossenv`.
-At minimum you need one. [Google Gemini](https://aistudio.google.com/app/apikey)
-is free — no credit card required.
+The wizard walks through each item one at a time and saves everything to `~/.crossenv`.
+You can re-run it any time to add or change settings.
 
 ### 4. Write your first report
 
 ```bash
-st-new my_topic.prompt            # create a prompt from the template, opens in editor
-st-bang my_topic.prompt           # generate with all AI providers, then review
+st-new my-first-report                              # create a prompt file, opens in editor
+st-bang my-first-report.prompt                      # generate reports from all AI providers
+st-ls my-first-report.json                          # see what was created
+st-print --preview --story 1 my-first-report.json   # read story 1 as a formatted preview
 ```
 
-That's it. All research and fact-checking commands are now available.
+`st-bang` submits your prompt to every configured AI provider and saves all the responses
+into a single JSON container. `st-ls` shows you what's inside. `st-print --preview` renders
+the story as formatted text so you can read it before doing anything else with it.
 
 ---
 
