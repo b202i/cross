@@ -57,7 +57,8 @@ def require_config() -> None:
 
 _UPDATE_CACHE_PATH     = os.path.join(os.path.expanduser("~/.cross_api_cache"),
                                       "update_check.json")
-_UPDATE_CHECK_INTERVAL = 86_400   # seconds — re-check PyPI at most once per day
+_UPDATE_CHECK_INTERVAL  = 86_400   # seconds — re-check PyPI at most once per day
+_UPDATE_NOTIFY_INTERVAL =  4 * 3600  # seconds — nag at most once every 4 hours
 
 
 def _read_update_cache() -> dict:
@@ -110,7 +111,7 @@ def check_for_updates() -> None:
     - If the cache is older than 24 h, fires a *daemon* background thread to
       refresh it — zero latency impact on the current command.
     - If the cached latest version is newer than what is installed, prints one
-      line to stderr (so it never pollutes piped stdout).
+      line to stderr at most once every 4 hours (``last_notified`` in cache).
     - Entirely suppressed when sys.stdout is not a TTY (pipes, CI, scripts).
     - Silently no-ops on any error (network, missing package metadata, etc.).
     """
@@ -128,10 +129,10 @@ def check_for_updates() -> None:
     except Exception:
         return
 
-    cache     = _read_update_cache()
+    cache      = _read_update_cache()
     last_check = cache.get("last_check", 0.0)
 
-    # Kick off a background refresh if the cache is stale
+    # Kick off a background refresh if the check cache is stale
     if time.time() - last_check > _UPDATE_CHECK_INTERVAL:
         t = threading.Thread(
             target=_bg_update_check, args=(current_ver,), daemon=True
@@ -149,12 +150,24 @@ def check_for_updates() -> None:
     except Exception:
         needs_update = latest_ver != current_ver
 
-    if needs_update:
-        print(
-            f"\n  💡 cross-st {latest_ver} is available  "
-            f"(installed: {current_ver})  →  st-admin --upgrade\n",
-            file=sys.stderr,
-        )
+    if not needs_update:
+        return
+
+    # Rate-limit the nag: at most once every _UPDATE_NOTIFY_INTERVAL seconds
+    last_notified = cache.get("last_notified", 0.0)
+    now = time.time()
+    if now - last_notified < _UPDATE_NOTIFY_INTERVAL:
+        return
+
+    print(
+        f"\n  💡 cross-st {latest_ver} is available  "
+        f"(installed: {current_ver})  →  st-admin --upgrade\n",
+        file=sys.stderr,
+    )
+
+    # Record that we just notified so we don't repeat for another 4 hours
+    cache["last_notified"] = now
+    _write_update_cache(cache)
 
 
 def load_cross_env() -> None:
