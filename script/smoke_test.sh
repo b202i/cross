@@ -37,12 +37,13 @@ fi
 
 # ── Install into isolated venv ────────────────────────────────────────────────
 SMOKE_HOME="$(mktemp -d)"
+PIPX_BIN="$SMOKE_HOME/bin"
+mkdir -p "$PIPX_BIN"
 trap 'rm -rf "$SMOKE_HOME"' EXIT
 
 echo
 echo "  Installing ${INSTALL_SPEC} into isolated environment …"
-PIPX_HOME="$SMOKE_HOME" pipx install "$INSTALL_SPEC" --quiet
-PIPX_BIN="$SMOKE_HOME/bin"
+PIPX_HOME="$SMOKE_HOME" PIPX_BIN_DIR="$PIPX_BIN" pipx install "$INSTALL_SPEC" --quiet
 
 run() {
     # run a command from the isolated pipx env
@@ -55,7 +56,7 @@ echo
 
 # ── 1. Version check ──────────────────────────────────────────────────────────
 echo "  1. Version"
-INSTALLED_VER="$(PIPX_HOME="$SMOKE_HOME" pipx runpip cross-st show cross-st 2>/dev/null \
+INSTALLED_VER="$(PIPX_HOME="$SMOKE_HOME" PIPX_BIN_DIR="$PIPX_BIN" pipx runpip cross-st show cross-st 2>/dev/null \
     | awk '/^Version:/{print $2}')"
 if [[ -n "$VERSION" && "$INSTALLED_VER" != "$VERSION" ]]; then
     _fail "Version mismatch: expected ${VERSION}, got ${INSTALLED_VER}"
