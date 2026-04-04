@@ -2,6 +2,12 @@
 """
 st-new — Start a new report from a prompt template
 
+Creates a fresh prompt file from a template and opens your editor so you can
+fill in the topic. The starting point for every new research report.
+
+Run before: st-gen   (generate a report from one AI provider)
+            st-bang  (generate from all AI providers in parallel)
+
 ```
 st-new                                  # pick a template interactively
 st-new --template custom subject        # use a named template

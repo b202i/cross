@@ -9,6 +9,11 @@ By default, sends the PDF to the system default printer via `lpr`.
 Use `--save-pdf` to write to a file instead, and `--output` to specify
 an explicit filename. Use `--preview` to open the PDF after saving.
 
+Run after:  st-gen   (generated a story)
+            st-prep  (polished the story text)
+Run before: st-post  (publish to Discourse)
+            done     (or save/print and you're finished)
+
 ```
 st-print subject.json                      # print story 1 to default printer
 st-print --save-pdf subject.json           # save as subject.pdf (auto-named)

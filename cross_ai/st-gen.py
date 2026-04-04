@@ -2,6 +2,15 @@
 """
 st-gen — Generate a report from a prompt
 
+Submits your prompt to your default AI provider, saves the response, and runs
+st-prep automatically — so the story is polished and ready to read straight away.
+
+Run after:  st-new   (create the prompt file)
+Run before: st-ls    (review what was generated)
+            st-fact  (fact-check the story)
+            st-cross (cross-check against other AI providers)
+            st-print (preview or print the story)
+
 ```
 st-gen subject.prompt                   # generate with default AI (runs st-prep automatically)
 st-gen --ai gemini subject.prompt       # use a specific provider

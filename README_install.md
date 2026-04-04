@@ -38,7 +38,7 @@ pipx install cross-st
 | What | Required? | Notes |
 |---|---|---|
 | AI API key (at least one) | ✅ Required | [Google Gemini](https://aistudio.google.com/app/apikey) is free — no credit card. Others: [Anthropic](https://console.anthropic.com), [OpenAI](https://platform.openai.com/api-keys), [xAI](https://console.x.ai), [Perplexity](https://perplexity.ai/settings/api) |
-| Discourse forum credentials | Optional | Only needed if you want to publish reports to a forum. Skip if unsure. |
+| Discourse forum credentials | Optional | Only needed if you want to publish reports to a forum. Skip if unsure — see [Configuring Discourse](docs/wiki/st-admin.md#discourse). |
 
 ```bash
 st-admin --setup

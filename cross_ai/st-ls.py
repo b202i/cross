@@ -7,6 +7,15 @@ Default shows the story table — a quick overview of all stories and their
 fact-check scores, much like the Linux `ls` command gives a directory listing.
 Use `-a` / `--all` to show every section, or combine flags as needed.
 
+Run after:  st-gen   (generated your first story)
+            st-bang  (generated from all AI providers)
+            st-cross (ran the cross-product fact-check)
+            st-fact  (ran a single fact-check)
+Run before: st-print  (preview or print a story)
+            st-fact   (fact-check a story)
+            st-cross  (cross-check all stories)
+            st-post   (publish a story)
+
 ```
 st-ls subject.json              # default: story table (titles, scores, flags)
 st-ls -a subject.json           # show all: data, stories, fact-checks, claims
