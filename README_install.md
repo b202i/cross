@@ -1,134 +1,205 @@
-# Installing Cross on a New Machine
-
-Complete step-by-step for a fresh clone on macOS.
+# Installing Cross
 
 ---
 
-## 1. System prerequisites
+## Quick Install (pipx — recommended for most users)
+
+`pipx` installs Cross into an isolated environment and puts all `st-*` commands on
+your PATH — no virtualenv to manage, no `source .venv/bin/activate` needed ever.
+
+### 1. Install pipx
 
 ```bash
-brew install python@3.11 ffmpeg aspell grip
+# macOS
+brew install pipx
+
+# Linux — Debian / Ubuntu
+sudo apt install pipx && pipx ensurepath
+
+# Linux — Fedora / RHEL
+sudo dnf install pipx && pipx ensurepath
+```
+
+### 2. Install Cross
+
+```bash
+pipx install cross-st
+```
+
+### 3. Add `~/.local/bin` to your PATH (macOS only, once)
+
+```bash
+grep -q '.local/bin' ~/.zshrc || echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.zshrc && exec zsh
+```
+
+If `st` is not found after install, this is the fix.
+
+### 4. Set up API keys
+
+```bash
+st-admin --setup
+```
+
+The wizard prompts for each provider key and saves them to `~/.crossenv`.
+At minimum you need one. [Google Gemini](https://aistudio.google.com/app/apikey)
+is free — no credit card required.
+
+### 5. Write your first report
+
+```bash
+st-new my_topic.prompt            # create a prompt from the template, opens in editor
+st-bang my_topic.prompt           # generate with all AI providers, then review
+```
+
+That's it. All research and fact-checking commands are now available.
+
+---
+
+## Adding TTS / audio (optional)
+
+TTS turns reports into spoken MP3 audio via a local Piper TTS server.
+The commands `st-speak`, `st-voice`, and `st-prep --mp3` require it.
+
+> **Installing the Python packages is only half the story.**
+> TTS also requires a running Wyoming Piper server and an ONNX voice model file.
+> The Python packages install instantly; the Piper server is the real setup step.
+
+### 1. Install system prerequisites
+
+```bash
+# macOS
+brew install ffmpeg
+
+# Linux — Debian / Ubuntu
+sudo apt install libsndfile1 ffmpeg
+
+# Linux — Fedora / RHEL
+sudo dnf install libsndfile ffmpeg
+
+# Linux — Arch
+sudo pacman -S libsndfile ffmpeg
+```
+
+`ffmpeg` handles MP3 encoding. On Linux, `libsndfile1` is required by `soundfile`
+(macOS bundles it inside the wheel).
+
+### 2. Install Cross with TTS packages
+
+```bash
+# Fresh install
+pipx install "cross-st[tts]"
+
+# Add TTS to an existing install (no reinstall needed)
+pipx inject cross-st cmudict pyphen soundfile websockets wyoming yakyak
+```
+
+### 3. Set up the Piper TTS server
+
+See **[README-TTS-audio.md](README-TTS-audio.md)** for the full walkthrough:
+Docker setup, native install, downloading voice models, and configuring
+`TTS_HOST` / `TTS_PORT` / `TTS_VOICE` in `~/.crossenv`.
+
+The short form with Docker:
+
+```bash
+docker run -d \
+  --name wyoming-piper \
+  -p 10200:10200 \
+  -v ~/piper-voices:/data \
+  rhasspy/wyoming-piper \
+  --voice en_US-lessac-medium
+```
+
+Or natively with pipx (no Docker required):
+
+```bash
+pipx install wyoming-piper
+wyoming-piper --voice en_US-lessac-medium --uri tcp://0.0.0.0:10200
+```
+
+### 4. Configure your voice
+
+```bash
+st-admin --set-tts-voice en_US-lessac-medium
+```
+
+Good starting voices: `en_US-lessac-medium`, `en_US-ryan-high`, `en_US-libritts-high`
+
+### 5. Test
+
+```bash
+st-speak my_topic.json     # renders story 1 → my_topic.mp3
+```
+
+---
+
+## Developer / Contributor Install
+
+For contributors working on the Cross codebase. Requires two repos: `cross`
+(code) and `cross-story` (story data).
+
+### 1. Authenticate with GitHub
+
+Both repos are private. Install [GitHub Desktop](https://desktop.github.com) and
+sign in, or create a Personal Access Token (PAT) with `repo` scope.
+
+### 2. Install prerequisites
+
+```bash
+# macOS
+brew install python@3.11 aspell grip
+
+# Linux — Debian / Ubuntu
+sudo apt install python3.11 python3.11-venv aspell
+pip install grip
+
+# Linux — Fedora / RHEL
+sudo dnf install python3.11 aspell
+pip install grip
 ```
 
 | Package | Used by |
 |---|---|
-| `python@3.11` | runtime |
-| `ffmpeg` | TTS audio conversion (MP3) |
+| `python@3.11` | runtime (3.10–3.13 all work; 3.11 is the pinned dev baseline) |
 | `aspell` | spell-check in `st-edit` |
 | `grip` | local Markdown preview in `st-edit` |
 
----
+> **ffmpeg** is only needed for TTS/audio. Install it when you set up Piper
+> (see the Adding TTS section above).
 
-## 2. Authenticate with GitHub
-
-Both repositories (`cross` and `cross-story`) are private.
-**GitHub authentication must be working before you clone.**
-
-The easiest way on macOS:
-
-1. Install [GitHub Desktop](https://desktop.github.com)
-2. Sign in: **GitHub Desktop → Settings → Accounts → Sign in with GitHub.com**
-3. Once signed in, the macOS keychain stores your credentials and the
-   `git` command-line tool picks them up automatically.
-
-Alternatively, create a **Personal Access Token** (PAT):
-- GitHub → Settings → Developer Settings → Personal Access Tokens → Tokens (classic)
-- Scopes needed: `repo` (full)
-- When `git` prompts for a password, paste the token
-
----
-
-## 3. Clone the repositories
-
-`cross` (code) and `cross-story` (story data) are two independent private repos.
-Clone them separately into the same parent directory:
+### 3. Clone both repos
 
 ```bash
 git clone https://github.com/b202i/cross.git
 git clone https://github.com/b202i/cross-story.git
-```
-
-Then create a symlink so Cross can find the story data at `cross/story/`:
-
-```bash
 ln -s ~/github/cross-story ~/github/cross/story
+cd cross
 ```
 
-> **Note:** Both repos are private and require `b202i` GitHub credentials.
-> `story/` is in `.gitignore` — the symlink is never committed to `cross`.
+`story/` is in `.gitignore` — the symlink is never committed.
 
----
-
-## 4. Create and activate the virtual environment
+### 4. Create the virtual environment and install
 
 ```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
-```
-
-Your prompt will change to `(.venv)`.  
-All subsequent steps assume the venv is active.
-
----
-
-## 5. Install Python dependencies
-
-```bash
 pip install -r requirements.txt
+pip install -e .
 ```
 
----
-
-## 6. Install the CLI commands
-
-Cross's `st` and `st-*` commands are `.py` files symlinked into the venv's
-`bin/` so they are on `PATH` whenever the venv is active.
-
-**Run this after step 4** — pip clears unregistered scripts from `bin/` during
-install, so running the script before pip will silently lose all the links.
-
-```bash
-bash script/symbolic_links.bash
-```
-
-Expected output ends with `Verified: 22 symlink(s)`.
-If the count is wrong, re-run — the script is safe to re-run.
-
----
-
-## 7. Configure API keys
+### 5. Configure API keys
 
 ```bash
 cp .env.example .env
+# open .env and fill in at least one API key
 ```
 
-Edit `.env` and fill in your keys:
+`.env` is in `.gitignore` — never committed. Copy it manually between machines
+or use a password manager.
 
-```env
-XAI_API_KEY=...
-ANTHROPIC_API_KEY=...
-OPENAI_API_KEY=...
-PERPLEXITY_API_KEY=...
-GEMINI_API_KEY=...
-```
+### 6. Configure Discourse (optional)
 
-Keys are obtained from each provider's developer console:
-
-| Provider | Console URL |
-|---|---|
-| xAI (Grok) | https://console.x.ai |
-| Anthropic (Claude) | https://console.anthropic.com |
-| OpenAI (GPT) | https://platform.openai.com/api-keys |
-| Perplexity | https://perplexity.ai/settings/api |
-| Google Gemini | https://aistudio.google.com/app/apikey |
-
----
-
-## 8. Configure Discourse (optional)
-
-Only needed if you post to a Discourse forum.
-
-Create `discourse.json` in the project root:
+Only needed for posting to a Discourse forum. Create `discourse.json`:
 
 ```json
 {
@@ -144,104 +215,65 @@ Create `discourse.json` in the project root:
 }
 ```
 
-Then generate the `DISCOURSE=` line in `.env`:
+Generate the `DISCOURSE=` env line and verify:
 
 ```bash
 python3 discourse.py
-```
-
-Verify the connection:
-
-```bash
 st-post --site MySite --check
 ```
 
----
-
-## 9. Verify the install
+### 7. Verify the install
 
 ```bash
 st --help
 ```
 
-You should see the Cross interactive menu help.  
-If `st` is not found, make sure the venv is active (`source .venv/bin/activate`)
-and re-run `bash script/symbolic_links.bash`.
-
----
-
-## Everyday use
-
-The venv must be active for `st` to be on `PATH`:
+### Everyday developer workflow
 
 ```bash
-cd cross
+cd ~/github/cross
 source .venv/bin/activate
 st my_topic.json
 ```
 
----
-
-## Updating an existing install
+### Updating
 
 ```bash
 cd ~/github/cross
-git pull                             # pull latest code
-pip install -r requirements.txt      # pick up any new/updated packages
-bash script/symbolic_links.bash      # re-link in case new st-* commands were added
+git pull
+pip install -r requirements.txt    # pick up any new/updated packages
 
 cd ~/github/cross-story
-git pull                             # pull latest story data independently
+git pull
 ```
 
----
+### Upgrading packages
 
-## Upgrading packages
-
-### Always use the terminal — not PyCharm's UI
-
-PyCharm's **Python Packages** panel (and the `↑` upgrade button in
-**Settings → Project → Python Interpreter**) installs the **latest available**
-version of each package, ignoring the pins in `requirements.txt`.
-This will break reproducibility and can introduce incompatible versions.
-
-**The correct workflow is always:**
+Always use the terminal — not PyCharm's package UI. PyCharm installs the latest
+available version, ignoring pins in `requirements.txt`.
 
 ```bash
-source .venv/bin/activate            # make sure the venv is active
-pip install -r requirements.txt      # install / sync to the pinned versions
+source .venv/bin/activate
+pip install -r requirements.txt    # sync to pinned versions
 ```
 
-### To upgrade a specific package
-
-1. Check the new version: `pip index versions <package>`
-2. Update the pin in `requirements.txt` (e.g. `anthropic==0.84.0` → `anthropic==0.85.0`)
-3. Install: `pip install -r requirements.txt`
+To upgrade a specific package:
+1. `pip index versions <package>` — check available versions
+2. Update the pin in `requirements.txt`
+3. `pip install -r requirements.txt`
 4. Test, then commit the updated `requirements.txt`
-
-### To check what is out of date
-
-```bash
-pip list --outdated
-```
 
 ### PyCharm interpreter setup
 
-When PyCharm asks you to configure an interpreter for this project:
+1. **Select existing** interpreter — point at `~/github/cross/.venv/bin/python`
+2. Do **not** let PyCharm generate a new venv — it defaults to the system Python
 
-1. Choose **Select existing** (not "Generate new")
-2. Point it at: `~/github/cross/.venv/bin/python`
-3. **Do not** let PyCharm create a new venv — it will default to the system
-   Python (3.14) and the audio packages will fail to install
-
-If PyCharm shows a red error "Already contains Python with version 3.9",
-the `.venv` needs to be recreated with Python 3.11:
+If you see "already contains Python with version 3.9":
 
 ```bash
 python3.11 -m venv --clear .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-bash script/symbolic_links.bash
 ```
 
 Then point PyCharm at `.venv/bin/python` again.
@@ -250,10 +282,7 @@ Then point PyCharm at `.venv/bin/python` again.
 
 ## Notes
 
-- `.env` and `discourse.json` are in `.gitignore` — **never committed**.
-  Copy them manually to each machine or use a password manager.
-- `cross-story` is a separate private repo cloned independently alongside `cross`.
-  If you don't have access, create an empty directory: `mkdir ~/github/cross/story`.
-- Cross is published to PyPI as `cross-st`. Users install with `pipx install cross-st`
-  (or `pip install cross-st`); the symlink script is no longer needed.
-
+- `cross-story` is a separate private repo. If you don't have access: `mkdir ~/github/cross/story`
+- Cross is on PyPI as `cross-st`: `pipx install cross-st` (no symlink script needed for PyPI installs)
+- API keys reference: see [README_opensource.md](README_opensource.md)
+- TTS full reference: see [README-TTS-audio.md](README-TTS-audio.md)
