@@ -52,33 +52,40 @@ Homebrew is the standard macOS package manager. If you don't have it:
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-### 2. Install pipx
+### 2. Install pipx and set up your PATH
 
 `pipx` installs Python CLI tools into isolated environments and puts them on your PATH —
 no virtualenv management, no version conflicts.
 
 ```bash
 # macOS
-brew install pipx && pipx ensurepath
+brew install pipx
+pipx ensurepath
 
 # Linux — Debian / Ubuntu
-sudo apt install pipx && pipx ensurepath
+sudo apt install pipx
+pipx ensurepath
 
 # Linux — Fedora / RHEL
-sudo dnf install pipx && pipx ensurepath
+sudo dnf install pipx
+pipx ensurepath
 ```
 
-Restart your terminal after `pipx ensurepath` so the new PATH takes effect.
+**Restart your terminal** (or open a new one) so the updated PATH takes effect.
 
 ### 3. Install Cross
 
 ```bash
-pipx install cross-st              # no TTS audio
-pipx install "cross-st[tts]"       # with text-to-speech (st-speak, st-voice)
+pipx install cross-st
 ```
 
-Both work on Python 3.10–3.13. No version juggling required.
-See [README-TTS-audio.md](README-TTS-audio.md) if you want MP3 audio output.
+To install with TTS/audio (`st-speak`, `st-voice`, `st-prep --mp3`):
+
+```bash
+pipx install "cross-st[tts]"
+```
+
+Works on Python 3.10–3.13. See [README-TTS-audio.md](README-TTS-audio.md) for TTS server setup.
 
 ### 4. Set up API keys
 
@@ -114,16 +121,18 @@ the main `cross` repo and a separate `cross-story` repo for story containers.
 
 ```bash
 # macOS
-brew install python@3.11 ffmpeg aspell grip
+brew install python@3.11 aspell grip
 
 # Linux — Debian / Ubuntu
-sudo apt install python3.11 python3.11-venv ffmpeg aspell
+sudo apt install python3.11 python3.11-venv aspell
 pip install grip
 
 # Linux — Fedora / RHEL
-sudo dnf install python3.11 ffmpeg aspell
+sudo dnf install python3.11 aspell
 pip install grip
 ```
+
+> **ffmpeg** is only needed for TTS/audio — install it when you set up the Piper server.
 
 > **Why Python 3.11?** Cross runs on Python 3.10, 3.11, 3.12, and 3.13 — all four
 > pass the full import test (`tests/test_tts_stack.py`). Python 3.11 is the recommended

@@ -7,18 +7,23 @@
 `pipx` installs Cross into an isolated environment and puts all `st-*` commands on
 your PATH — no virtualenv to manage, no `source .venv/bin/activate` needed ever.
 
-### 1. Install pipx
+### 1. Install pipx and set up your PATH
 
 ```bash
 # macOS
 brew install pipx
+pipx ensurepath
 
 # Linux — Debian / Ubuntu
-sudo apt install pipx && pipx ensurepath
+sudo apt install pipx
+pipx ensurepath
 
 # Linux — Fedora / RHEL
-sudo dnf install pipx && pipx ensurepath
+sudo dnf install pipx
+pipx ensurepath
 ```
+
+Then **restart your terminal** (or open a new one) so the updated PATH takes effect.
 
 ### 2. Install Cross
 
@@ -26,15 +31,7 @@ sudo dnf install pipx && pipx ensurepath
 pipx install cross-st
 ```
 
-### 3. Add `~/.local/bin` to your PATH (macOS only, once)
-
-```bash
-grep -q '.local/bin' ~/.zshrc || echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.zshrc && exec zsh
-```
-
-If `st` is not found after install, this is the fix.
-
-### 4. Set up API keys
+### 3. Set up API keys
 
 ```bash
 st-admin --setup
@@ -44,7 +41,7 @@ The wizard prompts for each provider key and saves them to `~/.crossenv`.
 At minimum you need one. [Google Gemini](https://aistudio.google.com/app/apikey)
 is free — no credit card required.
 
-### 5. Write your first report
+### 4. Write your first report
 
 ```bash
 st-new my_topic.prompt            # create a prompt from the template, opens in editor
