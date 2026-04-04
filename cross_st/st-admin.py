@@ -49,6 +49,7 @@ from pathlib import Path
 from dotenv import load_dotenv, set_key
 
 from ai_handler import get_ai_list, AI_HANDLER_REGISTRY
+from base_handler import _get_cache_dir
 from mmd_startup import load_cross_env, _PROJECT_ROOT
 from mmd_util import (seed_user_templates, _USER_TEMPLATES_DIR, _BUNDLED_TEMPLATES_DIR,
                       seed_stones_domains, _DEFAULT_USER_STONES_DIR, get_default_stones_dir)
@@ -547,6 +548,17 @@ def settings_show_all() -> None:
     print(f"  {'Default template':<{W}}  {settings_get_default_template()}")
     print(f"  {'Editor':<{W}}  {settings_get_editor()}")
     print(f"  {'Stones dir':<{W}}  {get_default_stones_dir()}")
+
+    # ── Paths ──────────────────────────────────────────────────────────────────
+    def _path_line(label: str, path: str) -> str:
+        exists = "✓" if os.path.exists(path) else "✗ (not found)"
+        return f"  {label:<{W}}  {path}  {exists}"
+
+    print(f"\n  {'Path':<{W}}  Location")
+    print(f"  {'─' * W}  {'─' * 36}")
+    print(_path_line("Config (~/.crossenv)",      _CROSSENV))
+    print(_path_line("API cache",                 _get_cache_dir()))
+    print(_path_line("Templates",                 str(_USER_TEMPLATES_DIR)))
     print()
 
 
