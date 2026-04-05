@@ -96,11 +96,13 @@ METADATA: dict[str, dict] = {
         "related": ["st-ls", "st-cat"],
     },
     "st-fix": {
-        "desc": "Rewrites the weak parts of a story using its fact-check results. Targets only claims that scored false or partially false — leaving accurate sections untouched.",
+        # NOTE: docs/wiki/st-fix.md is hand-authored — build_wiki.py will not overwrite it.
+        # Deep-dive implementation notes are in docs/wiki/st-fix-implementation.md.
+        "desc": "Rewrites the weak parts of a story using its fact-check results. Only sentences scored False or Partially False are touched — everything that checked out stays exactly as the AI wrote it.",
         "after": ["st-fact"],
         "before": ["st-post"],
         "related": ["st-fact", "st-merge", "st-post"],
-        "dev": "Three modes: `patch` (default) bundles all false claims into one prompt; `best-source` finds how other AIs in the container handled the same claim and presents alternatives; `synthesize` passes all stories and scores to the AI and asks for a full rewrite. Mode is set via `--mode`.",
+        "dev": "Four modes: `iterate` (default) fixes one sentence at a time with inline verification; `patch` bundles all false claims into one prompt; `best-source` uses other AI stories as reference material; `synthesize` passes all stories and scores to one AI for a full rewrite. Mode set via `--mode`. See [st-fix-implementation.md](st-fix-implementation.md) for architecture details.",
     },
     "st-gen": {
         "desc": "Sends your prompt file to an AI provider and saves the raw response into a `.json` container. This is the first step — the container it creates is used by every other command.",
