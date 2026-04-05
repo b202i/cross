@@ -1,0 +1,76 @@
+<svg width="700" height="148" viewBox="0 0 700 148" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,1 L6,3.5 L0,6 Z" fill="#9ca3af"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="350" y="16" text-anchor="middle"
+        font-family="ui-sans-serif,system-ui,-apple-system,Helvetica,Arial,sans-serif"
+        font-size="13" font-weight="600" fill="#111827">
+    st-domain — from topic idea to benchmark prompt
+  </text>
+
+  <!-- ── Box 1: Phase 1 YOU ──────────────────────────────────────── -->
+  <rect x="8"   y="26" width="110" height="72" rx="7" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+  <rect x="8"   y="26" width="110" height="26" rx="7" fill="#3b82f6"/>
+  <rect x="8"   y="40" width="110" height="12"        fill="#3b82f6"/>
+  <text x="63"  y="43" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="700" fill="white">PHASE 1 · YOU</text>
+  <text x="63"  y="65" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12" font-weight="600" fill="#1e3a8a">Pick a topic</text>
+  <text x="63"  y="82" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10"                  fill="#1e40af">what to benchmark</text>
+
+  <!-- Arrow 1 → 2 -->
+  <line x1="118" y1="62" x2="136" y2="62" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ── Box 2: Phase 2 DEFINE ──────────────────────────────────── -->
+  <rect x="138" y="26" width="110" height="72" rx="7" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+  <rect x="138" y="26" width="110" height="26" rx="7" fill="#16a34a"/>
+  <rect x="138" y="40" width="110" height="12"        fill="#16a34a"/>
+  <text x="193" y="43" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="700" fill="white">PHASE 2 · WIZARD</text>
+  <text x="193" y="65" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12" font-weight="600" fill="#14532d">Define domain</text>
+  <text x="193" y="82" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10"                  fill="#166534">name, topic, dates</text>
+
+  <!-- Arrow 2 → 3 -->
+  <line x1="248" y1="62" x2="266" y2="62" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ── Box 3: Phase 3 AI ASPECTS ─────────────────────────────── -->
+  <rect x="268" y="26" width="124" height="72" rx="7" fill="#f3e8ff" stroke="#d8b4fe" stroke-width="1.5"/>
+  <rect x="268" y="26" width="124" height="26" rx="7" fill="#7c3aed"/>
+  <rect x="268" y="40" width="124" height="12"        fill="#7c3aed"/>
+  <text x="330" y="43" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="700" fill="white">PHASE 3 · AI</text>
+  <text x="330" y="65" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12" font-weight="600" fill="#4c1d95">Suggest aspects</text>
+  <text x="330" y="82" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10"                  fill="#5b21b6">5 topics · you review</text>
+
+  <!-- Arrow 3 → 4 -->
+  <line x1="392" y1="62" x2="410" y2="62" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ── Box 4: Phase 4 SMOKE-TEST ──────────────────────────────── -->
+  <rect x="412" y="26" width="118" height="72" rx="7" fill="#fef3c7" stroke="#fcd34d" stroke-width="1.5"/>
+  <rect x="412" y="26" width="118" height="26" rx="7" fill="#d97706"/>
+  <rect x="412" y="40" width="118" height="12"        fill="#d97706"/>
+  <text x="471" y="43" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="700" fill="white">PHASE 4 · VALIDATE</text>
+  <text x="471" y="65" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12" font-weight="600" fill="#78350f">Smoke-test</text>
+  <text x="471" y="82" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10"                  fill="#92400e">AI returns 10 claims</text>
+
+  <!-- Arrow 4 → output -->
+  <line x1="530" y1="62" x2="548" y2="62" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ── Output box ─────────────────────────────────────────────── -->
+  <rect x="550" y="26" width="142" height="72" rx="7" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="550" y="26" width="142" height="26" rx="7" fill="#475569"/>
+  <rect x="550" y="40" width="142" height="12"        fill="#475569"/>
+  <text x="621" y="43" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" font-weight="700" fill="white">OUTPUT</text>
+  <text x="621" y="65" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11" font-weight="600" fill="#1e293b">domain.prompt</text>
+  <text x="621" y="82" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10"                  fill="#334155">ready for st-cross</text>
+
+  <!-- ── Footer: bracket showing wizard scope ───────────────────── -->
+  <line x1="138" y1="111" x2="530" y2="111" stroke="#9ca3af" stroke-width="1"/>
+  <line x1="138" y1="106" x2="138" y2="116" stroke="#9ca3af" stroke-width="1"/>
+  <line x1="530" y1="106" x2="530" y2="116" stroke="#9ca3af" stroke-width="1"/>
+  <text x="334" y="130" text-anchor="middle"
+        font-family="ui-sans-serif,system-ui,sans-serif" font-size="10" fill="#6b7280">
+    st-domain wizard handles phases 2–4 automatically
+  </text>
+</svg>
+

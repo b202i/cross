@@ -74,6 +74,12 @@ fi
 echo "→ Copying docs/wiki/*.md → ${WIKI_TMP}/"
 cp "${WIKI_SRC}"/*.md "${WIKI_TMP}/"
 
+# Copy SVG assets (diagrams, concept graphics) if any exist
+if compgen -G "${WIKI_SRC}/*.svg" > /dev/null 2>&1; then
+    echo "→ Copying docs/wiki/*.svg → ${WIKI_TMP}/"
+    cp "${WIKI_SRC}"/*.svg "${WIKI_TMP}/"
+fi
+
 cd "${WIKI_TMP}"
 git add -A
 if git diff --cached --quiet; then

@@ -6,6 +6,10 @@ Guides you through building a `.prompt` file for a new [Cross-Stones](cross-ston
 
 ---
 
+![st-domain workflow](st-domain-flow.svg)
+
+---
+
 ## Walkthrough — supply chain example
 
 **Phase 1 is just picking a topic.** Decide what domain you want to benchmark — that's it. `st-domain` handles Phases 2–4: defining the prompt, getting AI aspect suggestions, and validating the output. If you want guidance on choosing domains that produce reliable, comparable scores (measurability, verifiability pace, difficulty calibration), see the [Cross-Stones](cross-stones.md) page.
