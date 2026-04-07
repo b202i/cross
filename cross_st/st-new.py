@@ -9,12 +9,14 @@ Run before: st-gen   (generate a report from one AI provider)
             st-bang  (generate from all AI providers in parallel)
 
 ```
-st-new                                  # pick a template interactively
+st-new subject                          # create prompt, open editor
+st-new -g subject                       # create, edit, then run st-gen + st-prep automatically
+st-new -g --ai gemini subject           # same, using a specific AI provider
 st-new --template custom subject        # use a named template
-st-new --no-bang                        # edit only, skip st-bang
+st-new --bang subject                   # edit then run st-bang (all AIs)
 ```
 
-Options: --template  --no-bang  --no-spell  -v  -q
+Options: --template  -g/--gen  --ai  --bang  --st  --no-spell  -v  -q
 """
 import argparse
 import os
@@ -23,6 +25,7 @@ import subprocess
 import sys
 from mmd_startup import load_cross_env, require_config
 
+from ai_handler import get_ai_list, get_default_ai
 from mmd_util import seed_user_templates, _USER_TEMPLATES_DIR, _BUNDLED_TEMPLATES_DIR
 
 """
@@ -102,6 +105,10 @@ def main():
                         help='Name for the prompt file, with or without .prompt')
     parser.add_argument('-t', '--template', type=str, choices=get_template_list(),
                         help='Template to use')
+    parser.add_argument('-g', '--gen', action='store_true', default=False,
+                        help='Run st-gen (+ st-prep) automatically after editing')
+    parser.add_argument('--ai', type=str, choices=get_ai_list(), default=get_default_ai(),
+                        help=f'AI provider for --gen (default: {get_default_ai()})')
     parser.add_argument('-b', '--bang', action='store_true', default=False,
                         help='Start "st-bang" app after editing, render with all AI. '
                              'Start "st" if you also use "--st".')
@@ -154,6 +161,13 @@ def main():
         if not args.no_spell:
             cmd = f"aspell check {file_prompt}"
             subprocess.run(cmd.split())
+
+        if args.gen:
+            if not args.quiet:
+                print(f"Running st-gen --ai {args.ai} {file_prompt}")
+            cmd = ["st-gen", "--ai", args.ai, file_prompt]
+            subprocess.run(cmd)
+            sys.exit(0)
 
         if args.bang:
             cmd = f"st-bang {file_prompt}"
