@@ -162,26 +162,22 @@ def main():
             cmd = f"aspell check {file_prompt}"
             subprocess.run(cmd.split())
 
+        if args.bang:
+            if args.gen and not args.quiet:
+                print("Note: --bang supersedes --gen; running st-bang (all AIs).")
+            subprocess.run(f"st-bang {file_prompt}".split())
+            if args.st:
+                subprocess.run(f"st {file_json}".split())
+            sys.exit(0)
+
         if args.gen:
             if not args.quiet:
                 print(f"Running st-gen --ai {args.ai} {file_prompt}")
-            cmd = ["st-gen", "--ai", args.ai, file_prompt]
-            subprocess.run(cmd)
-            sys.exit(0)
-
-        if args.bang:
-            cmd = f"st-bang {file_prompt}"
-            subprocess.run(cmd.split())
-            if args.st:
-                cmd = f"st {file_json}"
-                subprocess.run(cmd.split())
+            subprocess.run(["st-gen", "--ai", args.ai, file_prompt])
             sys.exit(0)
 
         if args.st:
-            cmd = f"st {file_prompt}"
-            # subprocess.Popen(cmd.split())  # Run and never come back
-            # TODO consider run and never come back, to release all resources
-            subprocess.run(cmd.split())
+            subprocess.run(f"st {file_prompt}".split())
             sys.exit(0)
 
 
