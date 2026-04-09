@@ -47,6 +47,8 @@ docs/wiki/         ← GitHub Wiki source files (version-controlled); auto-built
 
 **AI stack lives in `cross-ai-core`.** The files `cross_st/ai_handler.py`, `cross_st/ai_error_handler.py`, and `cross_st/base_handler.py` are thin compatibility shims. The actual provider implementations (`ai_anthropic.py`, `ai_xai.py`, etc.) live in `~/github/cross-ai-core/cross_ai_core/`. All `st-*.py` imports continue to work unchanged through the shims.
 
+**`process_prompt()` stamps `_make` into every response it returns (≥ 0.4.2).** The key `_make` holds the provider string (e.g. `"gemini"`) so the response dict is self-describing. Use `get_content_auto(response)` and `put_content_auto(report, response)` from `ai_handler` whenever you hold a fresh response from `process_prompt()` — these dispatch to the correct provider without you needing to pass `make`. Fall back to `get_content(make, response)` / `put_content(make, report, response)` only when reading from old containers that lack `_make`.
+
 **Never hardcode AI provider names or model strings in code.** Always call `get_default_ai()` from `ai_handler` when a default provider is needed, and `get_ai_model(make)` / `settings_get_ai_model(make)` when a model string is needed. Use `--ai` CLI flags to let callers override. Hardcoded names like `"xai"` or `"anthropic"` in code are a bug.
 
 ## JSON Container Format (`.json` files)
@@ -75,6 +77,8 @@ Every story lives in a single `.json` container with two top-level arrays:
 ## API Response Cache
 All AI calls are cached by default. Cache key = MD5 of the serialized payload → `api_cache/<hash>.json`. Pass `--no-cache` to bypass. Set `CROSS_NO_CACHE=1` in `~/.crossenv` or `.env` to disable caching globally without per-command flags (implemented in cross-ai-core ≥ 0.4.1). The cache makes development fast — replay expensive API calls instantly.
 
+**Note:** `_make` is stamped into the in-memory response by `process_prompt()` at runtime but is **not** written to cache files on disk. Cached responses loaded from disk won't carry `_make`; use `get_content(make, response)` / `put_content(make, report, response)` when reading from cache directly. Responses returned by `process_prompt()` always have `_make` regardless of whether they came from cache or a live API call.
+
 ## Setup (Python 3.10+ required; 3.11 recommended)
 ```bash
 python3.11 -m venv .venv && source .venv/bin/activate
@@ -98,6 +102,9 @@ ANTHROPIC_API_KEY=...  XAI_API_KEY=...  OPENAI_API_KEY=...
 PERPLEXITY_API_KEY=... GEMINI_API_KEY=...
 DISCOURSE={"sites":[{"slug":"MySite","url":"...","username":"...","api_key":"...","category_id":1}]}
 DEFAULT_AI=xai          # provider used when --ai is not passed (set via st-admin)
+XAI_MODEL=grok-3-latest         # optional: override compiled-in default per provider (≥ 0.5.0)
+ANTHROPIC_MODEL=claude-sonnet-4-5  # same pattern for all five providers
+OPENAI_MODEL=gpt-4o-mini           # GEMINI_MODEL, PERPLEXITY_MODEL also supported
 TTS_VOICE=...           # piper TTS voice string
 TTS_HOST=localhost      # Piper TTS server host (used by st-speak, st-voice)
 TTS_PORT=5000           # Piper TTS server port
@@ -197,6 +204,16 @@ All API errors go through `ai_error_handler.handle_api_error()`. It distinguishe
 
 Sprint tracking has moved to `cross-internal/SPRINT_CURRENT.md` (private). A1–A9, B1–B5, C1, C2, C3 are complete. `cross-st 0.1.0` is live at https://pypi.org/project/cross-st/0.1.0/.
 
+### cross-ai-core 0.5.0 is live on PyPI
+
+`cross-st` requires `cross-ai-core>=0.5.0`. Both `pyproject.toml` and `requirements*.txt` files are updated. The local venv is running cross-ai-core 0.5.0 (editable install from `../cross-ai-core/`).
+
+**What changed in cross-ai-core 0.5.0:**
+- `process_prompt()` accepts a new `model=` keyword arg — per-call model override
+- `get_ai_model(make)` now checks `<MAKE_UPPER>_MODEL` env var first (e.g. `XAI_MODEL=grok-3-latest`)
+- Both resolve: explicit arg → `<MAKE_UPPER>_MODEL` env var → compiled-in handler default
+- **Breaking**: `openai>=2.0.0` is now required (was `>=1.70.0`); all SDKs bumped to latest tested versions
+
 ## Key Files for Context
 | File | Why It Matters |
 |------|----------------|
@@ -204,7 +221,7 @@ Sprint tracking has moved to `cross-internal/SPRINT_CURRENT.md` (private). A1–
 | `cross_st/st-admin.py` | Settings manager — `DEFAULT_AI`, model overrides, TTS voice, editor, `--init-templates`; `--overwrite-templates` replaces existing template files |
 | `cross_st/st-domain.py` | Interactive wizard: create a new Cross-Stones domain prompt (Phases 2–4) |
 | `cross_st/st-find.py` | Keyword search: `parse_boolean_pattern()` handles `+required ^excluded` operators; `wildcard_to_regex()` expands `*`/`?`; searches titles, prompts, and story text |
-| `cross_st/ai_handler.py` | Compatibility shim → `cross_ai_core.ai_handler`; exposes `process_prompt`, `get_default_ai`, etc. |
+| `cross_st/ai_handler.py` | Compatibility shim → `cross_ai_core.ai_handler`; exposes `process_prompt`, `get_default_ai`, `get_content_auto`, `put_content_auto`, etc. |
 | `cross_st/base_handler.py` | Compatibility shim → `cross_ai_core.ai_base.BaseAIHandler` |
 | `cross_st/ai_url.py` | X/Twitter fetch handler for `st-fetch`; uses `AI_MAKE="url"`, not registered in `AI_HANDLER_REGISTRY` |
 | `cross_st/mmd_startup.py` | `require_config()` — first-run guard; called near top of every `st-*.py` except `st-admin` and `st-man` |

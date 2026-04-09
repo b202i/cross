@@ -21,12 +21,12 @@
 # For full TTS support use requirements.txt with Python 3.10–3.13.
 
 # ── AI providers ──────────────────────────────────────────────────────────────
-cross-ai-core[all]==0.3.0     # AI provider stack (anthropic, openai, gemini, xai, perplexity)
+cross-ai-core[all]==0.5.0     # AI provider stack (anthropic, openai, gemini, xai, perplexity)
 # anthropic/google-genai/openai are transitive deps of cross-ai-core; re-pinned
 # here explicitly so pip-audit and Dependabot can scan exact developer versions.
-anthropic==0.84.0
-google-genai==1.65.0
-openai==1.70.0
+anthropic==0.92.0
+google-genai==1.71.0
+openai==2.31.0
 
 # ── Discourse posting ─────────────────────────────────────────────────────────
 pydiscourse==1.7.0
