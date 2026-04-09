@@ -13,10 +13,12 @@ from cross_ai_core.ai_handler import (        # explicit for IDE / type checkers
     get_ai_make,
     get_ai_model,
     get_content,
+    get_content_auto,
     get_data_content,
     get_data_title,
     get_default_ai,
     get_usage,
     process_prompt,
     put_content,
+    put_content_auto,
 )

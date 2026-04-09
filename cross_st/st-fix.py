@@ -213,7 +213,7 @@ import difflib
 import threading
 import time
 
-from ai_handler import get_ai_list, get_default_ai, process_prompt, get_content, put_content
+from ai_handler import get_ai_list, get_default_ai, process_prompt, get_content, get_content_auto, put_content, put_content_auto
 from mmd_process_report import remove_markdown
 
 
@@ -1112,23 +1112,39 @@ def _save_result(container, file_json, args,
 
     skip_after_factcheck: if True, skip the automatic post-fix fact-check
     (used by iterate mode, which verifies each sentence inline).
+
+    The AI that produced gen_response is read from gen_response["_make"], which
+    process_prompt() stamps automatically.  This means _save_result never needs
+    to be told which provider was used — the response is self-describing.
+    Falls back to args.ai if _make is absent (e.g. old containers or empty responses).
     """
     container_modified = False
 
+    # ── Resolve the AI that produced gen_response ─────────────────────────────
+    # gen_response["_make"] is stamped by process_prompt() for all fresh calls.
+    # This separates "which AI wrote this response" from args.ai (the CLI flag),
+    # which matters in synthesize mode where the rewriter is the best-story
+    # author, not the --ai flag value.
+    _gen_make = (
+        gen_response.get("_make")
+        if isinstance(gen_response, dict)
+        else None
+    ) or args.ai
+
     # ── Data entry (raw generation for audit trail) ───────────────────────────
-    # make must match the AI that produced gen_response (the rewriter, args.ai),
-    # not story_make — they differ when a story by AI-A is rewritten by AI-B,
-    # and mixing them causes get_data_title to parse the wrong response format.
+    # _gen_make must match the AI that produced gen_response — they differ when
+    # a story by AI-A is rewritten by AI-B, and mixing them causes
+    # get_data_title to parse the wrong response format.
     if gen_response and isinstance(gen_response, dict):
-        gen_response_final = put_content(args.ai, revised_text, gen_response)
+        gen_response_final = put_content_auto(revised_text, gen_response)
     else:
         gen_response_final = gen_response   # "" or non-dict — leave as-is
     data = {
-        "make":        args.ai,       # AI that wrote gen_response (the rewriter)
+        "make":        _gen_make,     # AI that wrote gen_response (the rewriter)
         "model":       fc_ai_model,
         "story_make":  story_make,    # original story author (for provenance)
         "story_model": story_model,
-        "fc_make":     args.ai,
+        "fc_make":     _gen_make,
         "fc_model":    fc_ai_model,
         "mode":        args.mode,
         "gen_payload":  gen_payload,
