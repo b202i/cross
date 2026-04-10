@@ -1,8 +1,181 @@
 # st-admin — Manage settings, API keys, and templates
 
-Manages your Cross settings: default AI provider, per-provider model overrides, TTS voice, editor, and prompt templates. Run once during setup, then whenever you want to switch providers.
+Settings manager for Cross: API keys, default AI provider, Discourse connection,
+prompt templates, TTS voice, and editor.
 
-**Related:** [st-new](st-new.md)  [AI Providers](ai-providers.md)  [TTS Audio](tts-audio.md)
+**Related:** [st-new](st-new.md) · [AI Providers](ai-providers.md) · [TTS Audio](tts-audio.md) · [FAQ](faq.md)
+
+---
+
+## Quick reference
+
+```
+st-admin                        # interactive menu
+st-admin --setup                # first-time wizard
+st-admin --show                 # print current config
+st-admin --set-default-ai NAME  # switch default AI (gemini xai anthropic openai perplexity)
+st-admin --upgrade              # upgrade cross-st + platform tools
+st-admin --cache-info           # cache path, file count, size
+st-admin --cache-clear          # delete all cached AI responses
+st-admin --cache-cull DAYS      # delete cache entries older than N days
+st-admin --discourse            # view / change Discourse posting category
+st-admin --discourse-setup      # one-time Discourse account provisioning
+```
+
+---
+
+## Use cases
+
+### First-time setup
+
+```
+install  ──▶  st-admin --setup  ──▶  ~/.crossenv written  ──▶  ready
+```
+
+```bash
+pipx install cross-st
+st-admin --setup
+```
+
+The wizard checks your environment, collects API keys for the providers you want,
+sets `DEFAULT_AI`, configures your editor and optional TTS voice, and offers to join
+the crossai.dev community.  Everything is saved to `~/.crossenv`.
+
+Once setup is complete, run any command.  A good first test:
+
+```bash
+st-new my_first_topic        # create a prompt file
+st-gen my_first_topic.json   # generate a story
+st-ls  my_first_topic.json   # list what's in the container
+```
+
+---
+
+### Adding Discourse after running --setup
+
+If you skipped the community step during setup, run the onboarding independently:
+
+```
+st-admin --discourse-setup
+  │
+  ├─▶  accept Terms of Service
+  ├─▶  open crossai.dev/signup in browser
+  ├─▶  enter your Discourse username
+  └─▶  provision account  ──▶  API key + private category written to ~/.crossenv
+```
+
+```bash
+st-admin --discourse-setup
+```
+
+At the end, five keys are written to `~/.crossenv` and `st-post` is ready to use.
+
+---
+
+### Changing the default Discourse posting category
+
+```
+st-admin --discourse
+  │
+  ├─▶  shows current config (site, username, active category)
+  │
+  └─▶  Change category?
+         1. alice-private  (your private category)
+         2. Test (cleared daily)  — cleared nightly, safe for testing
+         3. Enter a category ID manually
+         q. keep current and exit
+```
+
+```bash
+st-admin --discourse
+```
+
+Use **option 2** (Test category) when you want to verify that `st-post` works
+end-to-end without putting posts in your private category.  Posts there are
+deleted automatically at 00:05 UTC every night.
+
+> **Tip:** If `st-post` fails immediately after `--discourse-setup`, run
+> `st-admin --discourse` once.  It auto-migrates the flat `DISCOURSE_*` keys to
+> the `DISCOURSE` JSON that `st-post` reads.
+
+---
+
+### Changing your default AI provider
+
+```bash
+st-admin --set-default-ai gemini     # fastest path
+```
+
+Or use the interactive menu:
+
+```bash
+st-admin           # choose "Default AI" from the menu
+```
+
+The change is written as `DEFAULT_AI=gemini` to `~/.crossenv` and takes effect
+immediately.  You can also edit `~/.crossenv` directly.
+
+Per-call overrides are always available with `--ai`:
+
+```bash
+st-gen --ai anthropic my_topic.json   # one-off, doesn't change your default
+```
+
+---
+
+### Understanding the cache — what is it and why do I want it?
+
+```
+st-gen my_topic.json
+  │
+  ├─ cache miss ──▶  call AI API  ──▶  save to ~/.cross_api_cache/  ──▶  return result
+  └─ cache hit  ──▶  return saved result  (instant, free)
+```
+
+Cross saves every AI response to `~/.cross_api_cache/` keyed on the exact prompt +
+model.  A repeated call with the same inputs returns the saved response instantly —
+no API call, no cost, no wait.
+
+This matters most during iteration: re-running `st-fix`, adjusting `st-prep`
+options, or re-checking scores all hit the cache and cost nothing.
+
+```bash
+st-admin --cache-info          # see how much space the cache uses
+st-admin --cache-cull 30       # remove entries older than 30 days
+st-admin --cache-clear         # wipe the whole cache (safe — data is in .json files)
+
+st-gen --no-cache my_topic.json   # force a fresh call for one run
+```
+
+To disable caching globally: add `CROSS_NO_CACHE=1` to `~/.crossenv`.
+
+---
+
+### Is --upgrade safe? Will I lose my data?
+
+**Yes — your data is never touched.**
+
+```
+st-admin --upgrade
+  │
+  ├─▶  upgrades cross-st package (pip or pipx)
+  ├─▶  upgrades cross-ai-core
+  ├─▶  on macOS: brew upgrade for platform tools
+  └─▶  prints version before → after
+```
+
+What `--upgrade` never touches:
+
+| Location | Contains |
+|----------|----------|
+| `~/.crossenv` | API keys, DEFAULT_AI, all preferences |
+| `~/.cross_api_cache/` | Cached AI responses |
+| `~/.cross_templates/` | Prompt templates |
+| `~/cross-stones/` | Benchmark domain prompts |
+| Your `.json` story files | Everything you've generated |
+
+If you're on an editable (developer) install, the PyPI step is skipped and you're
+told to `git pull` instead.
 
 ---
 
@@ -99,3 +272,4 @@ This closes the gap between provisioning and posting without requiring you to re
 ## For developers
 
 Reads and writes `~/.crossenv` (global) and `.env` (repo-local). Model overrides are stored in `.ai_models`, one `provider=model` per line. `--init-templates` seeds `~/.cross_templates/` from the bundled `template/` directory.
+

@@ -19,23 +19,25 @@ import re
 import sys
 import webbrowser
 
-# Documentation lives in docs/wiki/ in the main repo — no separate wiki repo needed.
-# GitHub renders Markdown files at blob/main URLs for free on any plan.
-_DOCS_BASE  = "https://github.com/b202i/cross-st/blob/main/docs/wiki"
-_DOCS_HOME  = f"{_DOCS_BASE}/Home.md"
+# Documentation lives in docs/wiki/ (version-controlled) and is published to the
+# GitHub Wiki via script/push_wiki.sh.  Point st-man --web at the live wiki so
+# that relative links (no .md extension) resolve correctly.
+_WIKI_BASE  = "https://github.com/b202i/cross-st/wiki"
+_DOCS_BASE  = _WIKI_BASE          # kept for internal URL building
+_DOCS_HOME  = _WIKI_BASE          # wiki home is the root URL
 
-# Named non-command pages: slug → filename in docs/wiki/
+# Named non-command pages: slug → wiki page name (no extension — wiki convention)
 WIKI_PAGES  = {
-    "home":         "Home.md",
-    "onboarding":   "Onboarding.md",
-    "ai-providers": "ai-providers.md",
-    "cross-stones": "cross-stones.md",
-    "faq":          "faq.md",
-    "tts-audio":    "tts-audio.md",
+    "home":         "Home",
+    "onboarding":   "Onboarding",
+    "ai-providers": "ai-providers",
+    "cross-stones": "cross-stones",
+    "faq":          "faq",
+    "tts-audio":    "tts-audio",
 }
 
 # Keep WIKI_BASE as a public alias for any external callers
-WIKI_BASE = _DOCS_BASE
+WIKI_BASE = _WIKI_BASE
 _HERE       = os.path.dirname(os.path.abspath(__file__))
 
 # Related commands shown as "See also" links at the bottom of each help page
@@ -110,7 +112,7 @@ def _get_help(name: str) -> tuple[str, str]:
             f"{name}\n\n"
             f"No built-in description available.\n"
             f"Run `{name} --help` for usage information.\n"
-            f"Docs: {_DOCS_BASE}/{name}.md"
+            f"Docs: {_WIKI_BASE}/{name}"
         )
 
     # One-liner: first non-empty line, strip leading ## / # markers
@@ -128,7 +130,7 @@ _WIDTH = 72
 
 
 def _print_index() -> None:
-    print(f"\n  Cross — command reference  ({_DOCS_HOME})\n")
+    print(f"\n  Cross — command reference\n")
     for cmd in COMMANDS:
         one_liner, _ = _get_help(cmd)
         # Keep only the part after the em-dash for compact display
@@ -139,16 +141,19 @@ def _print_index() -> None:
         print(f"  {cmd:<18s}  {desc}")
 
     print()
-    print(f"  Wiki pages:  onboarding  ai-providers  cross-stones  faq")
-    print(f"  Usage:       st-man <command>            local help")
-    print(f"               st-man <command> --web      open wiki page")
-    print(f"               st-man --web                open wiki home")
+    print(f"  Topics:      onboarding  ai-providers  cross-stones  faq")
+    print()
+    print(f"  Usage:       st-man <command>             show help in terminal")
+    print(f"               st-man <command> --web       open full wiki page in browser")
+    print(f"               st-man <command> --doc       show raw docstring")
+    print(f"               st-man --web                 open wiki home in browser")
+    print(f"               st-man faq --web             open FAQ in browser")
     print()
 
 
 def _print_command_help(name: str) -> None:
     one_liner, full_doc = _get_help(name)
-    wiki_url = f"{_DOCS_BASE}/{name}.md"
+    wiki_url = f"{_WIKI_BASE}/{name}"
 
     print()
     print("─" * _WIDTH)
@@ -180,7 +185,8 @@ def _print_command_help(name: str) -> None:
     print()
     print("─" * _WIDTH)
     print(f"  Wiki:  {wiki_url}")
-    print(f"  Tip:   st-man {name} --web   opens the wiki page in your browser")
+    print(f"  Tip:   st-man {name} --web   opens the full wiki page in your browser")
+    print(f"         st-man {name} --doc   shows the raw source docstring")
     if name in SEE_ALSO:
         related = SEE_ALSO[name]
         see_line = "  ·  ".join(related)
@@ -196,8 +202,9 @@ def _print_command_help(name: str) -> None:
 def main() -> None:
     args = sys.argv[1:]
 
-    open_web = "--web" in args
-    args     = [a for a in args if a != "--web"]
+    open_web  = "--web" in args
+    show_doc  = "--doc" in args
+    args      = [a for a in args if a not in ("--web", "--doc")]
 
     # --help / -h → show the index (st-man has no argparse; handle manually)
     if "--help" in args or "-h" in args:
@@ -217,8 +224,8 @@ def main() -> None:
 
     # Named wiki pages (not st-* commands)
     if target in WIKI_PAGES:
-        filename = WIKI_PAGES[target]
-        url = f"{_DOCS_BASE}/{filename}"
+        page_name = WIKI_PAGES[target]
+        url = f"{_WIKI_BASE}/{page_name}"
         print(f"  Opening: {url}")
         webbrowser.open(url)
         return
@@ -233,9 +240,17 @@ def main() -> None:
         sys.exit(1)
 
     if open_web:
-        url = f"{_DOCS_BASE}/{target}.md"
+        url = f"{_WIKI_BASE}/{target}"
         print(f"  Opening: {url}")
         webbrowser.open(url)
+        return
+
+    # --doc: show raw docstring only (developer view)
+    if show_doc:
+        _, full_doc = _get_help(target)
+        print()
+        print(full_doc)
+        print()
         return
 
     _print_command_help(target)
